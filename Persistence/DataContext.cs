@@ -32,19 +32,9 @@ namespace Persistence
                 .WithOne(m => m.User)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.UserChannels)
-                .WithOne(uc => uc.User)
-                .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.Entity<Channel>()
                 .HasMany(c => c.Messages)
                 .WithOne(m => m.Channel)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Channel>()
-                .HasMany(c => c.UserChannels)
-                .WithOne(uc => uc.Channel)
                 .OnDelete(DeleteBehavior.SetNull);
         }
 
