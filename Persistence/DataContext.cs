@@ -26,6 +26,26 @@ namespace Persistence
                 .HasOne(uc => uc.Channel)
                 .WithMany(u => u.UserChannels)
                 .HasForeignKey(uc => uc.ChannelId);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Messages)
+                .WithOne(m => m.User)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.UserChannels)
+                .WithOne(uc => uc.User)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Channel>()
+                .HasMany(c => c.Messages)
+                .WithOne(m => m.Channel)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Channel>()
+                .HasMany(c => c.UserChannels)
+                .WithOne(uc => uc.Channel)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
         public DbSet<User> Users { get; set; }
