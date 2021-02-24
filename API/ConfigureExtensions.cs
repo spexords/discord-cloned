@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Application.Services;
+using Domain.Interfaces;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -29,8 +30,14 @@ namespace API
         public static void ConfigureRepositories(this IServiceCollection services)
         {
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
+            services.AddTransient<IUserRepository, UserRepository>();
         }
+
+        public static void ConfigureServices(this IServiceCollection services)
+        {
+            services.AddTransient<IUserService, UserService>();
+        }
+
 
         public static void ConfigureControllers(this IServiceCollection services)
         {

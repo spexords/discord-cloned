@@ -12,7 +12,7 @@ namespace API.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("test")]
         [AllowAnonymous]
         public async Task<IActionResult> RandomNumber()
         {

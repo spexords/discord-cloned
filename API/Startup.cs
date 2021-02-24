@@ -39,6 +39,8 @@ namespace API
         {
             services.ConfigureRepositories();
 
+            services.ConfigureServices();
+
             services.ConfigureControllers();
 
             services.AddHttpContextAccessor();

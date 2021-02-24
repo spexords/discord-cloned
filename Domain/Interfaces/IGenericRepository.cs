@@ -10,11 +10,10 @@ namespace Domain.Interfaces
     {
         Task<T> GetByIdAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
-        IEnumerable<T> Find(Expression<Func<T, bool>> expression);
+        Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression);
         Task AddAsync(T entity);
         Task AddRangeAsync(IEnumerable<T> entities);
         Task RemoveAsync(T entity);
         Task RemoveRangeAsync(IEnumerable<T> entities);
-
     }
 }

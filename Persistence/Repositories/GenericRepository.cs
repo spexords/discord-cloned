@@ -30,9 +30,10 @@ namespace Persistence.Repositories
             await context.SaveChangesAsync();
         }
 
-        public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
+        public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression)
         {
-            return context.Set<T>().Where(expression);
+            var task = Task.Run(() => context.Set<T>().Where(expression));
+            return await task;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
