@@ -1,0 +1,59 @@
+﻿using Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Persistence;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace API
+{
+    public static class ConfigureExtensions
+    {
+        public static void ConfigureEfSqlServer(this IServiceCollection services, string connectionString)
+        {
+            services.AddDbContext<DataContext>(opt =>
+            {
+                opt.UseSqlServer(connectionString);
+            });
+        }
+
+        public static void ConfigureJwt(this IServiceCollection services, string token)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token));
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt =>
+            {
+                opt.RequireHttpsMetadata = false;
+                opt.SaveToken = true;
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+        }
+        public static void ConfigureCustomAuthorizationPolicies(this IServiceCollection services)
+        {
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("IsChannelCreator", policy =>
+                {
+                    policy.Requirements.Add(new IsChannelCreator());
+                });
+            });
+        }
+
+    }
+}

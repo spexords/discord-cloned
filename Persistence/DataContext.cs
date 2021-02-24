@@ -28,9 +28,18 @@ namespace Persistence
                 .HasForeignKey(uc => uc.ChannelId);
 
             modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
                 .HasMany(u => u.Messages)
                 .WithOne(m => m.User)
                 .OnDelete(DeleteBehavior.SetNull);
+
 
             modelBuilder.Entity<Channel>()
                 .HasMany(c => c.Messages)

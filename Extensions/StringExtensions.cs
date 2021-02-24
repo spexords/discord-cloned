@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Application.Extensions
+namespace Extensions
 {
     public static class StringExtensions
     {

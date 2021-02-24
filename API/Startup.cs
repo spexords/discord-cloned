@@ -1,3 +1,6 @@
+using Application.Interfaces;
+using Infrastructure.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,16 +29,18 @@ namespace API
         
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(opt =>
-            {
-                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            });
+            services.ConfigureEfSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             ConfigureServices(services);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers();
+            services.AddTransient<IAuthorizationHandler, IsChannelCreatorHandler>();
+            services.ConfigureCustomAuthorizationPolicies();
+            services.ConfigureJwt(Configuration["JwtTokenKey"]);
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
         }
 
 
