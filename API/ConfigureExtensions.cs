@@ -1,4 +1,5 @@
-﻿using Infrastructure.Security;
+﻿using Domain.Interfaces;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using Persistence.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,12 @@ namespace API
             {
                 opt.UseSqlServer(connectionString);
             });
+        }
+
+        public static void ConfigureRepositories(this IServiceCollection services)
+        {
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
         }
 
         public static void ConfigureControllers(this IServiceCollection services)

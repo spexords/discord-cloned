@@ -37,6 +37,7 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureRepositories();
 
             services.ConfigureControllers();
 
