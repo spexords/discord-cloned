@@ -1,5 +1,7 @@
 ﻿using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +21,15 @@ namespace API
             services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseSqlServer(connectionString);
+            });
+        }
+
+        public static void ConfigureControllers(this IServiceCollection services)
+        {
+            services.AddControllers(opt =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
             });
         }
 
@@ -50,7 +61,7 @@ namespace API
             {
                 opt.AddPolicy("IsChannelCreator", policy =>
                 {
-                    policy.Requirements.Add(new IsChannelCreator());
+                    policy.Requirements.Add(new IsChannelCreatorRequirement());
                 });
             });
         }

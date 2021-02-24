@@ -12,6 +12,6 @@ namespace Domain
         public DateTime Date { get; set; }
         public string Content { get; set; }
         public virtual User User { get; set; }
-        public virtual Channel Channel { get; set; }
+        public virtual Subchannel Subchannel { get; set; }
     }
 }

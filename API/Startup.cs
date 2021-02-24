@@ -38,7 +38,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.ConfigureControllers();
 
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -48,6 +48,8 @@ namespace API
 
             services.ConfigureJwt(Configuration["JwtTokenKey"]);
             services.AddScoped<IJwtGenerator, JwtGenerator>();
+
+            services.AddScoped<IUserAccessor, UserAccessor>();
         }
 
 

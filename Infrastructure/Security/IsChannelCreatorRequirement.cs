@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Security
 {
-    public class IsChannelCreator : IAuthorizationRequirement
+    public class IsChannelCreatorRequirement : IAuthorizationRequirement
     {
 
     }
 
-    public class IsChannelCreatorHandler : AuthorizationHandler<IsChannelCreator>
+    public class IsChannelCreatorHandler : AuthorizationHandler<IsChannelCreatorRequirement>
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IActionContextAccessor actionContextAccessor;
@@ -29,7 +29,7 @@ namespace Infrastructure.Security
             this.dataContext = dataContext;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsChannelCreator requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsChannelCreatorRequirement requirement)
         {
             var currentUsername = httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var channelId = Guid.Parse(actionContextAccessor.ActionContext.RouteData.Values["id"].ToString());

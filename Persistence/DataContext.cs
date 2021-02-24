@@ -41,9 +41,9 @@ namespace Persistence
                 .OnDelete(DeleteBehavior.SetNull);
 
 
-            modelBuilder.Entity<Channel>()
+            modelBuilder.Entity<Subchannel>()
                 .HasMany(c => c.Messages)
-                .WithOne(m => m.Channel)
+                .WithOne(m => m.Subchannel)
                 .OnDelete(DeleteBehavior.SetNull);
         }
 
