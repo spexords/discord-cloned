@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Persistence;
@@ -37,8 +39,13 @@ namespace API
         {
 
             services.AddControllers();
-            services.AddTransient<IAuthorizationHandler, IsChannelCreatorHandler>();
+
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
             services.ConfigureCustomAuthorizationPolicies();
+            services.AddTransient<IAuthorizationHandler, IsChannelCreatorHandler>();
+
             services.ConfigureJwt(Configuration["JwtTokenKey"]);
             services.AddScoped<IJwtGenerator, JwtGenerator>();
         }
@@ -54,6 +61,8 @@ namespace API
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
