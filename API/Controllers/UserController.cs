@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.Forms;
+using Application.Interfaces;
 using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,6 @@ namespace API.Controllers
             return Ok();
         }
 
-
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody] LoginRequest values)
@@ -42,6 +42,20 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> CurrentUser()
         {
             return Ok(await userService.CurrentUser());
+        }
+
+        [HttpPut("password")]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest values)
+        {
+            await userService.ChangePassword(values);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser([FromBody] UpdateAccountRequest values)
+        {
+            await userService.UpdateUser(values);
+            return Ok();
         }
     }
 }

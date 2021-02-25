@@ -11,7 +11,7 @@ namespace Persistence.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class, new()
     {
-        private readonly DataContext context;
+        protected readonly DataContext context;
 
         public GenericRepository(DataContext context)
         {
@@ -51,6 +51,13 @@ namespace Persistence.Repositories
             context.Set<T>().Remove(entity);
             await context.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(T entity)
+        {
+            context.Set<T>().Update(entity);
+            await context.SaveChangesAsync();
+        }
+
 
         public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {

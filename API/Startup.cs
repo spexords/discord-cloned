@@ -1,5 +1,6 @@
 using API.Middlewares;
 using Application.Interfaces;
+using Application.Services;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -44,6 +45,8 @@ namespace API
             services.ConfigureRepositories();
 
             services.ConfigureServices();
+
+            services.AddAutoMapper(typeof(UserService).Assembly);
 
             services.ConfigureControllers();
 

@@ -11,6 +11,7 @@ namespace Domain
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string HashedPassword { get; set; }
+        public virtual ICollection<Subchannel> Subchannels { get; set; }
         public virtual ICollection<UserChannel> UserChannels { get; set; }
     }
 }

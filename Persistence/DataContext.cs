@@ -49,6 +49,8 @@ namespace Persistence
 
         public DbSet<User> Users { get; set; }
         public DbSet<Channel> Channels { get; set; }
+        public DbSet<Subchannel> Subchannels { get; set; }
+        public DbSet<UserChannel> UserChannels { get; set; }
         public DbSet<Message> Messages { get; set; }
     }
 }

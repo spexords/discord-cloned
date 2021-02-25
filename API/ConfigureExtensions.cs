@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Interfaces;
+using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,7 @@ namespace API
         {
             services.AddDbContext<DataContext>(opt =>
             {
+                opt.UseLazyLoadingProxies();
                 opt.UseSqlServer(connectionString);
             });
         }
@@ -31,11 +33,13 @@ namespace API
         {
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IChannelRepository, ChannelRepository>();
         }
 
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IChannelService, ChannelService>();
         }
 
         public static void ConfigureCors(this IServiceCollection services)

@@ -12,5 +12,7 @@ namespace Application.Interfaces
         Task<UserDto> Login(LoginRequest values);
         Task Register(RegisterRequest values);
         Task<UserDto> CurrentUser();
+        Task ChangePassword(ChangePasswordRequest values);
+        Task UpdateUser(UpdateAccountRequest values);
     }
 }

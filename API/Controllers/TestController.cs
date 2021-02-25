@@ -14,7 +14,7 @@ namespace API.Controllers
     {
         [HttpGet("test")]
         [AllowAnonymous]
-        public async Task<IActionResult> RandomNumber()
+        public IActionResult RandomNumber()
         {
             var rng = new Random();
             return Ok(rng.Next(0, 100));
