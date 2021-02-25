@@ -38,6 +38,22 @@ namespace API
             services.AddTransient<IUserService, UserService>();
         }
 
+        public static void ConfigureCors(this IServiceCollection services)
+        {
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .WithOrigins("http://localhost:3000")
+                          .AllowCredentials()
+                          .WithExposedHeaders("WWW-Authenticate");
+                });
+            });
+        }
+
+
 
         public static void ConfigureControllers(this IServiceCollection services)
         {

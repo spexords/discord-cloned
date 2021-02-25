@@ -33,6 +33,9 @@ namespace API
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             services.ConfigureEfSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+
+            services.ConfigureCors();
+
             ConfigureServices(services);
         }
 
@@ -51,6 +54,7 @@ namespace API
             services.AddTransient<IAuthorizationHandler, IsChannelCreatorHandler>();
 
             services.ConfigureJwt(Configuration["JwtTokenKey"]);
+
             services.AddScoped<IJwtGenerator, JwtGenerator>();
 
             services.AddScoped<IUserAccessor, UserAccessor>();
@@ -64,6 +68,8 @@ namespace API
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
 
