@@ -11,5 +11,6 @@ namespace Application.Services
     {
         Task<UserDto> Login(LoginRequest values);
         Task Register(RegisterRequest values);
+        Task<UserDto> CurrentUser();
     }
 }

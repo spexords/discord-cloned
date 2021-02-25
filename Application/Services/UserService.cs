@@ -16,11 +16,13 @@ namespace Application.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IJwtGenerator jwtGenerator;
+        private readonly IUserAccessor userAccessor;
 
-        public UserService(IUserRepository userRepository, IJwtGenerator jwtGenerator)
+        public UserService(IUserRepository userRepository, IJwtGenerator jwtGenerator, IUserAccessor userAccessor)
         {
             this.userRepository = userRepository;
             this.jwtGenerator = jwtGenerator;
+            this.userAccessor = userAccessor;
         }
 
         public async Task<UserDto> Login(LoginRequest values)
@@ -57,6 +59,18 @@ namespace Application.Services
             };
 
             await userRepository.AddAsync(newUser);
+        }
+
+        public async Task<UserDto> CurrentUser()
+        {
+            var user = (await userRepository.Find(u => u.Username == userAccessor.GetCurrentUsername())).FirstOrDefault();
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Token = jwtGenerator.CreateToken(user)
+            };
         }
     }
 }

@@ -38,5 +38,10 @@ namespace API.Controllers
             return Ok(await userService.Login(values));
         }
 
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> CurrentUser()
+        {
+            return Ok(await userService.CurrentUser());
+        }
     }
 }
