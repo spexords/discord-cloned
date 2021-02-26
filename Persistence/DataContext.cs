@@ -35,6 +35,10 @@ namespace Persistence
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<Channel>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Messages)
                 .WithOne(m => m.User)
