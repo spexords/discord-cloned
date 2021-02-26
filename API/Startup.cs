@@ -42,8 +42,6 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureRepositories();
-
             services.ConfigureServices();
 
             services.AddAutoMapper(typeof(UserService).Assembly);
@@ -51,10 +49,10 @@ namespace API
             services.ConfigureControllers();
 
             services.AddHttpContextAccessor();
-            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             services.ConfigureCustomAuthorizationPolicies();
             services.AddTransient<IAuthorizationHandler, IsChannelCreatorHandler>();
+            services.AddTransient<IAuthorizationHandler, IsCorrectChannelPasswordHandler>();
 
             services.ConfigureJwt(Configuration["JwtTokenKey"]);
 

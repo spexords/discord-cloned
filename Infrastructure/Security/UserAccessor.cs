@@ -21,5 +21,7 @@ namespace Infrastructure.Security
             var username = httpContextAcessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             return username;
         }
+
+   
     }
 }

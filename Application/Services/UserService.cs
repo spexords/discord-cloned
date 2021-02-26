@@ -3,7 +3,6 @@ using Application.Errors;
 using Application.Forms;
 using Application.Interfaces;
 using Domain;
-using Domain.Interfaces;
 using Extensions;
 using AutoMapper;
 using System;
@@ -13,25 +12,27 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
+using Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository userRepository;
+        private readonly DataContext dataContext;
         private readonly IUserAccessor userAccessor;
         private readonly IMapper mapper;
 
-        public UserService(IUserRepository userRepository, IUserAccessor userAccessor, IMapper mapper)
+        public UserService(DataContext dataContext, IUserAccessor userAccessor, IMapper mapper)
         {
-            this.userRepository = userRepository;
+            this.dataContext = dataContext;
             this.userAccessor = userAccessor;
             this.mapper = mapper;
         }
 
         public async Task<UserDto> Login(LoginRequest values)
         {
-            var user = (await userRepository.Find(u => u.Username == values.Username && u.HashedPassword == values.Password.ToSHA256())).FirstOrDefault();
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == values.Username && u.HashedPassword == values.Password.ToSHA256());
             if(user == null)
             {
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Invalid username or password" });
@@ -42,7 +43,7 @@ namespace Application.Services
 
         public async Task Register(RegisterRequest values)
         {
-            var user = (await userRepository.Find(u => u.Username == values.Username || u.Email == values.Email)).FirstOrDefault();
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == values.Username && u.HashedPassword == values.Password.ToSHA256());
 
             if (user != null)
             {
@@ -56,35 +57,46 @@ namespace Application.Services
                 HashedPassword = values.Password.ToSHA256()
             };
 
-            await userRepository.AddAsync(newUser);
+            await dataContext.AddAsync(newUser);
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if(!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
+
         }
 
         public async Task<UserDto> CurrentUser()
         {
-            var user = (await userRepository.Find(u => u.Username == userAccessor.GetCurrentUsername())).FirstOrDefault();
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
             return mapper.Map<UserDto>(user);
         }
 
         public async Task ChangePassword(ChangePasswordRequest values)
         {
-            var user = (await userRepository.Find(u => u.Username == userAccessor.GetCurrentUsername() && 
-                                                       u.HashedPassword == values.CurrentPassword.ToSHA256()))
-                                                       .FirstOrDefault();
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername() 
+                                                                && u.HashedPassword == values.CurrentPassword.ToSHA256());
             if(user == null)
             {
                 throw new RestException(HttpStatusCode.BadRequest, new { details = "Invalid password" });
             }
             user.HashedPassword = values.NewPassword.ToSHA256();
-            await userRepository.UpdateAsync(user);
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
         }
 
         public async Task UpdateUser(UpdateAccountRequest values)
         {
-            var user = (await userRepository.Find(u => u.Username == userAccessor.GetCurrentUsername())).FirstOrDefault();
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
             user.Email = values.Email ?? user.Email;
-            await userRepository.UpdateAsync(user);
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
         }
-
-  
     }
 }

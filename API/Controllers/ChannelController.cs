@@ -35,6 +35,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy ="IsCorrectChannelPassword")]
         public async Task<ActionResult<ChannelDetailedDto>> Details(Guid id)
         {
             return Ok(await channelService.Details(id));

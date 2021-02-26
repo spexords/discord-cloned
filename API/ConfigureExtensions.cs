@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces;
 using Application.Services;
-using Domain.Interfaces;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -9,12 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
-using Persistence.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace API
 {
@@ -27,13 +22,6 @@ namespace API
                 opt.UseLazyLoadingProxies();
                 opt.UseSqlServer(connectionString);
             });
-        }
-
-        public static void ConfigureRepositories(this IServiceCollection services)
-        {
-            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IChannelRepository, ChannelRepository>();
         }
 
         public static void ConfigureServices(this IServiceCollection services)
@@ -97,6 +85,10 @@ namespace API
                 opt.AddPolicy("IsChannelCreator", policy =>
                 {
                     policy.Requirements.Add(new IsChannelCreatorRequirement());
+                });
+                opt.AddPolicy("IsCorrectChannelPassword", policy =>
+                {
+                    policy.Requirements.Add(new IsCorrectChannelPasswordRequirement());
                 });
             });
         }

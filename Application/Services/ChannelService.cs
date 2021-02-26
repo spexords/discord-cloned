@@ -4,10 +4,12 @@ using Application.Forms;
 using Application.Interfaces;
 using AutoMapper;
 using Domain;
-using Domain.Interfaces;
 using Extensions;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,57 +18,80 @@ namespace Application.Services
 {
     public class ChannelService : IChannelService
     {
-        private readonly IChannelRepository channelRepository;
+        private readonly DataContext dataContext;
         private readonly IUserAccessor userAccessor;
         private readonly IMapper mapper;
 
-        public ChannelService(IChannelRepository channelRepository, IUserAccessor userAccessor, IMapper mapper)
+        public ChannelService(DataContext dataContext, IUserAccessor userAccessor, IMapper mapper)
         {
-            this.channelRepository = channelRepository;
+            this.dataContext = dataContext;
             this.userAccessor = userAccessor;
             this.mapper = mapper;
         }
 
         public async Task Create(ChannelCreateRequest values)
         {
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
             var channel = new Channel
             {
                 Id = values.Id,
                 HashedPassword = values.Password.ToSHA256(),
                 Name = values.Name
             };
-            await channelRepository.AddAsync(channel);
+
+            var userChannel = new UserChannel
+            {
+                User = user,
+                Channel = channel,
+                IsCreator = true
+            };
+            await dataContext.UserChannels.AddAsync(userChannel);
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
         }
 
         public async Task Delete(Guid id)
         {
-            var channel = await channelRepository.FindByIdAndUsernameAsync(id, userAccessor.GetCurrentUsername());
+            var channel = await dataContext.Channels.FirstOrDefaultAsync(c => c.Id == id);
             if(channel == null)
             {
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found" });
             }
-            await channelRepository.RemoveAsync(channel);
+            dataContext.Remove(channel);
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
         }
 
         public async Task<ChannelDetailedDto> Details(Guid id)
         {
-            var channel = await channelRepository.FindByIdAndUsernameAsync(id, userAccessor.GetCurrentUsername());
+            var channel = await dataContext.UserChannels.Where(uc => uc.User.Username == userAccessor.GetCurrentUsername())
+                                                        .Select(uc => uc.Channel)
+                                                        .FirstOrDefaultAsync(c => c.Id == id);
             if (channel == null)
             {
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found" });
             }
+
             return mapper.Map<ChannelDetailedDto>(channel);
         }
 
         public async Task<List<ChannelDto>> GetAll()
         {
-            var channels = await channelRepository.GetAllChannelsByUsernameAsync(userAccessor.GetCurrentUsername());
+            var channels = await dataContext.UserChannels.Where(uc => uc.User.Username == userAccessor.GetCurrentUsername())
+                                                         .Select(uc => uc.Channel)
+                                                         .ToListAsync();
             return mapper.Map<List<ChannelDto>>(channels);
         }
 
         public async Task UpdateChannelPassword(Guid id, ChangePasswordRequest values)
         {
-            var channel = await channelRepository.FindByIdAndUsernameAsync(id, userAccessor.GetCurrentUsername());
+            var channel = await dataContext.Channels.FirstOrDefaultAsync(c => c.Id == id);
 
             if (channel == null)
             {
@@ -78,7 +103,11 @@ namespace Application.Services
                 throw new RestException(HttpStatusCode.BadRequest, new { details = "Invalid password" });
             }
             channel.HashedPassword = values.NewPassword.ToSHA256();
-            await channelRepository.UpdateAsync(channel);
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
         }
 
     }
