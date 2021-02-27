@@ -32,18 +32,13 @@ namespace Application.Services
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Subchannel not found" });
             }
 
-            var channel = subchannel.Channel;
-            if (channel.HashedPassword != userAccessor.GetCurrentChannelPassword())
+            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
+
+            if (!subchannel.Channel.UserChannels.Any(uc => uc.UserId == user.Id))
             {
-                throw new RestException(HttpStatusCode.Forbidden, new { details = "Invalid channel password" });
+                throw new RestException(HttpStatusCode.Forbidden, new { details = "User does not belong to the channel" });
             }
     
-            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
-            if(!channel.UserChannels.Any(uc => uc.UserId == user.Id))
-            {
-                throw new RestException(HttpStatusCode.Forbidden, new { details = "You are not belong to the channel" });
-            }
-
             dataContext.Messages.Add(new Message
             {
                 Id = values.Id,
@@ -62,15 +57,15 @@ namespace Application.Services
 
         public async Task Delete(Guid id)
         {
-            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
             var subchannel = await dataContext.Subchannels.FirstOrDefaultAsync(sc => sc.Id == id);
             if (subchannel == null)
             {
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Subchannel not found" });
             }
-            if(!await dataContext.UserChannels.AnyAsync(uc => uc.ChannelId == subchannel.Channel.Id && user.Id == uc.UserId && uc.IsCreator))
+
+            if(!await dataContext.UserChannels.AnyAsync(uc => uc.ChannelId == subchannel.Channel.Id && userAccessor.GetCurrentUsername() == uc.User.Username && uc.IsCreator))
             {
-                throw new RestException(HttpStatusCode.Forbidden, new { details = "You are not creator" });
+                throw new RestException(HttpStatusCode.Forbidden, new { details = "User is not the channel creator" });
             }
 
             dataContext.Remove(subchannel);

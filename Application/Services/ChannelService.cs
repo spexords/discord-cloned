@@ -119,17 +119,10 @@ namespace Application.Services
 
         public async Task<ChannelDetailedDto> Details(Guid id)
         {
-            var channel = await dataContext.UserChannels.Where(uc => uc.User.Username == userAccessor.GetCurrentUsername())
-                                                        .Select(uc => uc.Channel)
-                                                        .FirstOrDefaultAsync(c => c.Id == id);
+            var channel = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.User.Username == userAccessor.GetCurrentUsername() && uc.ChannelId == id);
             if (channel == null)
             {
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found" });
-            }
-
-            if (channel.HashedPassword != userAccessor.GetCurrentChannelPassword())
-            {
-                throw new RestException(HttpStatusCode.Forbidden, new { details = "Invalid channel password" });
             }
 
             return mapper.Map<ChannelDetailedDto>(channel);
@@ -158,6 +151,23 @@ namespace Application.Services
             }
 
             dataContext.UserChannels.Add(new UserChannel { Channel = channel, User = user });
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
+        }
+
+        public async Task KickUser(Guid channelId, Guid userId)
+        {
+            var userChannel = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.ChannelId == channelId && uc.UserId == userId );
+            if (userChannel == null)
+            {
+                throw new RestException(HttpStatusCode.NotFound, new { details = "Channel or user not found" });
+            }
+
+            dataContext.Remove(userChannel);
+
             var success = await dataContext.SaveChangesAsync() > 0;
             if (!success)
             {

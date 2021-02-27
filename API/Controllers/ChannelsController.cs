@@ -54,6 +54,16 @@ namespace API.Controllers
             return Ok();
         }
 
+
+        /// api/channels/1/users/2
+        [Authorize(Policy = "IsChannelCreator")]
+        [HttpDelete("{id}/users/{uid}")]
+        public async Task<ActionResult> KickUser(Guid id, Guid uid)
+        {
+            await channelService.KickUser(id, uid);
+            return Ok();
+        }
+
         /// api/channels/id
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDetailedDto>> Details(Guid id)
@@ -78,6 +88,7 @@ namespace API.Controllers
             await channelService.UpdateChannelPassword(id, values);
             return Ok();
         }
+
 
     }
 }
