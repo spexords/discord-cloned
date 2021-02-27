@@ -16,5 +16,6 @@ namespace Application.Interfaces
         Task<ChannelDetailedDto> Details(Guid id);
         Task Delete(Guid id);
         Task<List<ChannelDto>> GetAll();
+        Task<List<UserGeneralDto>> GetAllUsers(Guid id);
     }
 }

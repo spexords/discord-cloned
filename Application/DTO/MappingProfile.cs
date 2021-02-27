@@ -12,7 +12,7 @@ namespace Application.DTO
         {
             CreateMap<User, UserDto>()
                 .ForMember(u => u.Token, opt => opt.MapFrom<TokenResolver>());
-
+            CreateMap<User, UserGeneralDto>();
             CreateMap<Channel, ChannelDto>();
             CreateMap<Channel, ChannelDetailedDto>();
             CreateMap<Subchannel, SubchannelDto>();

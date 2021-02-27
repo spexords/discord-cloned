@@ -90,5 +90,12 @@ namespace API.Controllers
         }
 
 
+        /// api/channels/1/users
+        [HttpGet("{id}/users")]
+        public async Task<ActionResult<List<UserGeneralDto>>> GetChannelUsers(Guid id)
+        {
+            return Ok(await channelService.GetAllUsers(id));
+        }
+
     }
 }

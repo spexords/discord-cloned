@@ -119,13 +119,13 @@ namespace Application.Services
 
         public async Task<ChannelDetailedDto> Details(Guid id)
         {
-            var channel = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.User.Username == userAccessor.GetCurrentUsername() && uc.ChannelId == id);
-            if (channel == null)
+            var userChannel = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.User.Username == userAccessor.GetCurrentUsername() && uc.ChannelId == id);
+            if (userChannel == null)
             {
-                throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found" });
+                throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found or user does not belong to the channel" });
             }
 
-            return mapper.Map<ChannelDetailedDto>(channel);
+            return mapper.Map<ChannelDetailedDto>(userChannel.Channel);
         }
 
         public async Task<List<ChannelDto>> GetAll()
@@ -195,6 +195,18 @@ namespace Application.Services
                 throw new Exception("Problem occured during saving changes.");
             }
         }
+
+        public async Task<List<UserGeneralDto>> GetAllUsers(Guid id)
+        {
+            if (!await dataContext.UserChannels.AnyAsync(uc => uc.ChannelId == id && uc.User.Username == userAccessor.GetCurrentUsername()))
+            {
+                throw new RestException(HttpStatusCode.BadRequest, new { details = "User does not belong to the channel" });
+            }
+
+            var users = await dataContext.UserChannels.Where(uc => uc.ChannelId == id).Select(uc => uc.User).ToListAsync();
+            return mapper.Map<List<UserGeneralDto>>(users);
+        }
+
 
     }
 }
