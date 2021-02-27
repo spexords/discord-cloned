@@ -28,6 +28,8 @@ namespace API
         {
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IChannelService, ChannelService>();
+            services.AddTransient<ISubchannelService, SubchannelService>();
+            services.AddTransient<IMessageService, MessageService>();
         }
 
         public static void ConfigureCors(this IServiceCollection services)

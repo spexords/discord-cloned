@@ -33,7 +33,7 @@ namespace Infrastructure.Security
             var currentUsername = httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var channelId = Guid.Parse(httpContextAccessor.HttpContext.GetRouteData().Values["id"].ToString());
             var channel = dataContext.Channels.Find(channelId);
-            var creator = channel.UserChannels.FirstOrDefault(uc => uc.IsCreator);
+            var creator = channel?.UserChannels.FirstOrDefault(uc => uc.IsCreator);
             if (creator?.User.Username == currentUsername)
             {
                 context.Succeed(requirement);

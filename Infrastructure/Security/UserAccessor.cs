@@ -16,12 +16,16 @@ namespace Infrastructure.Security
         {
             this.httpContextAcessor = httpContextAcessor;
         }
+
         public string GetCurrentUsername()
         {
             var username = httpContextAcessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             return username;
         }
-
-   
+        public string GetCurrentChannelPassword()
+        {
+            var hashedPassword = httpContextAcessor.HttpContext.Request.Headers["channel-password"].FirstOrDefault();
+            return hashedPassword.ToUpper();
+        }
     }
 }

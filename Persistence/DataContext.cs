@@ -39,6 +39,11 @@ namespace Persistence
                 .HasIndex(c => c.Name)
                 .IsUnique();
 
+            modelBuilder.Entity<Channel>()
+                .HasMany(c => c.Subchannels)
+                .WithOne(sc => sc.Channel)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Messages)
                 .WithOne(m => m.User)

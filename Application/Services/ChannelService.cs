@@ -127,6 +127,11 @@ namespace Application.Services
                 throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found" });
             }
 
+            if (channel.HashedPassword != userAccessor.GetCurrentChannelPassword())
+            {
+                throw new RestException(HttpStatusCode.Forbidden, new { details = "Invalid channel password" });
+            }
+
             return mapper.Map<ChannelDetailedDto>(channel);
         }
 
@@ -179,43 +184,6 @@ namespace Application.Services
             {
                 throw new Exception("Problem occured during saving changes.");
             }
-        }
-
-        public async Task CreateMessage(Guid channelId, Guid subchannelId, MessageCreateRequest values)
-        {
-            var channel = await dataContext.Channels.FirstOrDefaultAsync(c => c.Id == channelId);
-            if (channel == null)
-            {
-                throw new RestException(HttpStatusCode.NotFound, new { details = "Channel not found" });
-            }
-            var subchannel = channel.Subchannels.FirstOrDefault(sc => sc.Id == subchannelId);
-            if (subchannel == null)
-            {
-                throw new RestException(HttpStatusCode.NotFound, new { details = "Subchannel not found" });
-            }
-
-            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
-
-            dataContext.Messages.Add(new Message
-            {
-                Subchannel = subchannel,
-                User = user,
-                Date = DateTime.Now,
-                Content = values.Content
-            });
-
-            var success = await dataContext.SaveChangesAsync() > 0;
-            if (!success)
-            {
-                throw new Exception("Problem occured during saving changes.");
-            }
-        }
-
-        public Task DeleteMessage(Guid id)
-        {
-            //var message = dataContext.Messages
-            //var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == userAccessor.GetCurrentUsername());
-            throw new NotImplementedException();
         }
 
     }
