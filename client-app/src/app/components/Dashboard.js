@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import LeftSidebar from './LeftSidebar'
+import SubchannelList from './SubchannelList'
 import MessagePanel from './MessagePanel'
 
 const Container = styled.div`
@@ -15,7 +15,7 @@ const Container = styled.div`
 const Dashboard = () => {
     return (
         <Container>
-            <LeftSidebar/>
+            <SubchannelList/>
             <MessagePanel/>
         </Container>
     )

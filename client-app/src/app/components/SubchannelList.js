@@ -1,13 +1,44 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { selectChannelState } from "../stores/channelSlice";
+import UserInfo from "./UserInfo";
 
-const Container = styled.div`
+const Containter = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 15px;
+  width: 250px;
+  background: rgb(47, 49, 54);
 `;
 
-const HeaderContainer = styled.div`
+const ChannelNameWrapper = styled.div`
+  display: flex;
+  height: 50px;
+  flex-direction: row;
+  cursor: pointer;
+  padding: 0px 15px;
+  border-bottom: 1px solid rgb(35, 37, 39);
+  align-items: center;
+  justify-content: space-between;
+  > img {
+    height: 15px;
+    object-fit: contain;
+  }
+  > h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+`;
+
+const SubchannelsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 15px;
+  padding: 0 7px;
+`;
+
+const SubheaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -25,7 +56,7 @@ const HeaderContainer = styled.div`
   }
 `;
 
-const SubchannelContainer = styled.div`
+const SubchannelWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -42,20 +73,28 @@ const SubchannelContainer = styled.div`
   }
 `;
 
-const SubchannelList = ({ header, items }) => {
+const SubchannelList = () => {
+  const { selectedChannel } = useSelector(selectChannelState);
   return (
-    <Container>
-      <HeaderContainer>
-        <img alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
-        <h1>{header}</h1>
-      </HeaderContainer>
-      {items.map((i) => (
-        <SubchannelContainer key={i.id}>
-          <img alt="hash" src="./assets/icons/hash-tag.svg" />
-          <h1>{i.name}</h1>
-        </SubchannelContainer>
-      ))}
-    </Container>
+    <Containter>
+      <ChannelNameWrapper>
+        <h3>Testuje</h3>
+        <img src="./assets/icons/down-arrow.svg" alt="dropdown" />
+      </ChannelNameWrapper>
+      <SubchannelsWrapper>
+        <SubheaderWrapper>
+          <img alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
+          <h1>kanały tekstowe</h1>
+        </SubheaderWrapper>
+        {selectedChannel?.subchannels?.map((sc) => (
+          <SubchannelWrapper key={sc.id}>
+            <img alt="hash" src="./assets/icons/hash-tag.svg" />
+            <h1>{sc.name}</h1>
+          </SubchannelWrapper>
+        ))}
+      </SubchannelsWrapper>
+      <UserInfo />
+    </Containter>
   );
 };
 

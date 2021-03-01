@@ -32,6 +32,7 @@ const MessageInput = styled.input`
 `;
 
 const Chat = () => {
+  
   return (
     <Container>
       <MessageList>

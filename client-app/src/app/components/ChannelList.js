@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import {
+  fetchChannelDetails,
+  fetchChannels,
+  selectChannelState,
+} from "../stores/channelSlice";
 
 const Container = styled.div`
   padding: 10px;
   display: flex;
   flex-direction: column;
   width: 70px;
+  background: #202225;
 `;
 
 const ChannelCircledButton = styled.div`
@@ -18,6 +25,7 @@ const ChannelCircledButton = styled.div`
   margin-bottom: 8px;
   border-radius: 100%;
   background-color: rgb(54, 57, 63);
+
   &:hover {
     border-radius: 35%;
   }
@@ -28,24 +36,21 @@ const ChannelCircledButton = styled.div`
 `;
 
 const ChannelList = () => {
-  const channels = [
-    {
-      id: "fee31c8a-80c3-4ceb-e625-08d8db2639fc",
-      name: "bus",
-    },
-    {
-      id: "b908e1a9-40ea-4685-e627-08d8db2639fc",
-      name: "bandwidth",
-    },
-    {
-      id: "6a6c2963-695e-4909-e629-08d8db2639fc",
-      name: "Protocol",
-    },
-  ];
+  const disptach = useDispatch();
+  useEffect(() => {
+    disptach(fetchChannels());
+  }, []);
+  const { channels } = useSelector(selectChannelState);
   return (
     <Container>
-      {channels.map((c) => (
-        <ChannelCircledButton hasNotifications={true} key={c.id}>
+      {channels?.map((c) => (
+        <ChannelCircledButton
+          hasNotifications={true}
+          key={c.id}
+          onClick={() => {
+            disptach(fetchChannelDetails(c.id));
+          }}
+        >
           {c.name[0]}
         </ChannelCircledButton>
       ))}
