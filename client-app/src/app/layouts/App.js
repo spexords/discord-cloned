@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import ChannelList from "../components/ChannelList";
-import Dashboard from "../components/Dashboard";
+import DiscordApp from "./DiscordApp";
+import HomeScreen from "./HomeScreen";
 
 const AppContainer = styled.div`
   display: flex;
@@ -9,15 +9,20 @@ const AppContainer = styled.div`
   height: 100vh;
   flex-direction: row;
   background-color: rgb(32, 34, 37);
+  overflow: hidden;
 `;
 
-
 const App = () => {
+  const isLoggedIn = false;
   return (
-  <AppContainer>
-      <ChannelList/>
-      <Dashboard/>
-  </AppContainer>);
+    <AppContainer>
+      {isLoggedIn ? (
+        <DiscordApp/>
+      ) : (
+        <HomeScreen/>
+      )}
+    </AppContainer>
+  );
 };
 
 export default App;
