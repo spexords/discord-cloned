@@ -19,6 +19,16 @@ namespace API.Controllers
         {
             this.subchannelService = subchannelService;
         }
+
+        ///api/subchannels/1
+        [HttpGet("{id}")]
+        public async Task<ActionResult> Details(Guid id)
+        {
+            return (Ok(await subchannelService.Details(id)));
+        }
+
+
+        ///api/subchannels/1/messages
         [HttpPost("{id}/messages")]
         public async Task<ActionResult> CreateMessage(Guid id, MessageCreateRequest values)
         {
@@ -26,6 +36,7 @@ namespace API.Controllers
             return Ok();
         }
 
+        ///api/subchannels/1
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {

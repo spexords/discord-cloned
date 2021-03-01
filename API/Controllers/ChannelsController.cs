@@ -22,14 +22,14 @@ namespace API.Controllers
             this.channelService = channelService;
         }
 
-        /// api/channels
+        ///api/channels
         [HttpGet]
         public async Task<ActionResult<List<ChannelDto>>> GetAll()
         {
             return Ok(await channelService.GetAll());
         }
 
-        /// api/channels
+        ///api/channels
         [HttpPost]
         public async Task<ActionResult> Create(ChannelCreateRequest values)
         {
@@ -37,7 +37,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        /// api/channels/1
+        ///api/channels/1
         [HttpDelete("{id}")]
         [Authorize(Policy = "IsChannelCreator")]
         public async Task<ActionResult> Delete(Guid id)
@@ -46,7 +46,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        /// api/channels/join
+        ///api/channels/join
         [HttpPost("join")]
         public async Task<ActionResult> Join(ChannelJoinRequest values)
         {
@@ -55,7 +55,7 @@ namespace API.Controllers
         }
 
 
-        /// api/channels/1/users/2
+        ///api/channels/1/users/2
         [Authorize(Policy = "IsChannelCreator")]
         [HttpDelete("{id}/users/{uid}")]
         public async Task<ActionResult> KickUser(Guid id, Guid uid)
@@ -64,14 +64,14 @@ namespace API.Controllers
             return Ok();
         }
 
-        /// api/channels/id
+        ///api/channels/id
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDetailedDto>> Details(Guid id)
         {
             return Ok(await channelService.Details(id));
         }
 
-        /// api/channels/1/subchannels
+        ///api/channels/1/subchannels
         [HttpPost("{id}/subchannels")]
         [Authorize(Policy = "IsChannelCreator")]
         public async Task<ActionResult> CreateSubchannel(Guid id, SubchannelCreateRequest values)
@@ -80,7 +80,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        /// api/channels/1/password
+        ///api/channels/1/password
         [HttpPut("{id}/password")]
         [Authorize(Policy = "IsChannelCreator")]
         public async Task<ActionResult> UpdateChannelPassword(Guid id, ChangePasswordRequest values)
@@ -90,7 +90,7 @@ namespace API.Controllers
         }
 
 
-        /// api/channels/1/users
+        ///api/channels/1/users
         [HttpGet("{id}/users")]
         public async Task<ActionResult<List<UserGeneralDto>>> GetChannelUsers(Guid id)
         {

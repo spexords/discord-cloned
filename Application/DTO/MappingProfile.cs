@@ -16,6 +16,7 @@ namespace Application.DTO
             CreateMap<Channel, ChannelDto>();
             CreateMap<Channel, ChannelDetailedDto>();
             CreateMap<Subchannel, SubchannelDto>();
+            CreateMap<Subchannel, SubchannelDetailedDto>();
             CreateMap<Message, MessageDto>()
                 .ForMember(m => m.Sender, opt => opt.MapFrom(src => src.User.Username));
         }

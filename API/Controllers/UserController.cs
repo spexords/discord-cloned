@@ -23,6 +23,7 @@ namespace API.Controllers
             this.userService = userService;
         }
 
+        ///api/user/register
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody]RegisterRequest values)
@@ -31,6 +32,7 @@ namespace API.Controllers
             return Ok();
         }
 
+        ///api/user/login
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody] LoginRequest values)
@@ -38,12 +40,14 @@ namespace API.Controllers
             return Ok(await userService.Login(values));
         }
 
+        ///api/user    
         [HttpGet]
         public async Task<ActionResult<UserDto>> CurrentUser()
         {
             return Ok(await userService.CurrentUser());
         }
 
+        ///api/user/password
         [HttpPut("password")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest values)
         {
@@ -51,6 +55,7 @@ namespace API.Controllers
             return Ok();
         }
 
+        ///api/user
         [HttpPut]
         public async Task<ActionResult> UpdateUser([FromBody] UpdateAccountRequest values)
         {

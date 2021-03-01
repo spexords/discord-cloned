@@ -1,6 +1,8 @@
-﻿using Application.Errors;
+﻿using Application.DTO;
+using Application.Errors;
 using Application.Forms;
 using Application.Interfaces;
+using AutoMapper;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -17,11 +19,13 @@ namespace Application.Services
     {
         private readonly DataContext dataContext;
         private readonly IUserAccessor userAccessor;
+        private readonly IMapper mapper;
 
-        public SubchannelService(DataContext dataContext, IUserAccessor userAccessor)
+        public SubchannelService(DataContext dataContext, IUserAccessor userAccessor, IMapper mapper)
         {
             this.dataContext = dataContext;
             this.userAccessor = userAccessor;
+            this.mapper = mapper;
         }
 
         public async Task CreateMessage(Guid id, MessageCreateRequest values)
@@ -74,6 +78,22 @@ namespace Application.Services
             {
                 throw new Exception("Problem occured during saving changes.");
             }
+        }
+
+        public async Task<SubchannelDetailedDto> Details(Guid id)
+        {
+            var subchannel = await dataContext.Subchannels.FirstOrDefaultAsync(sc => sc.Id == id);
+            if (subchannel == null)
+            {
+                throw new RestException(HttpStatusCode.NotFound, new { details = "Subchannel not found" });
+            }
+
+            if (!await dataContext.UserChannels.AnyAsync(uc => uc.User.Username == userAccessor.GetCurrentUsername() && uc.ChannelId == subchannel.Channel.Id))
+            {
+                throw new RestException(HttpStatusCode.NotFound, new { details = "User does not belong to the channel" });
+            }
+
+            return mapper.Map<SubchannelDetailedDto>(subchannel);
         }
     }
 }

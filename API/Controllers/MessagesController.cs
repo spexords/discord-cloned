@@ -18,6 +18,8 @@ namespace API.Controllers
         {
             this.messageService = messageService;
         }
+
+        ///api/messages/1
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
