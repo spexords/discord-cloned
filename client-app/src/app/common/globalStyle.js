@@ -1,6 +1,30 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
+
+  /* Scrollbar */
+  /* width */
+  ::-webkit-scrollbar {
+    width: 6px;
+    cursor: pointer;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background: rgb(46, 51, 56);
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(32, 34, 37);
+    border-radius: 5px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    
+  }
    form > label {
     width: 100%;
     margin-bottom: 5px;

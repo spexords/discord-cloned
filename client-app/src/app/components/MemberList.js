@@ -1,5 +1,7 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { selectChannelState } from "../stores/channelSlice";
 import MemberInfo from "./MemberInfo";
 
 const Container = styled.div`
@@ -18,32 +20,15 @@ const Container = styled.div`
 `;
 
 const MemberList = () => {
-  const members = [
-    {
-      id: 1,
-      name: "Toek",
-    },
-    {
-      id: 2,
-      name: "Andrzejek",
-    },
-    {
-      id: 3,
-      name: "Papegaua",
-    },
-    {
-      id: 4,
-      name: "Filalalo",
-    },
-  ];
+  const {selectedChannelUsers} = useSelector(selectChannelState);
   return (
     <Container>
       <h1>members</h1>
-      {members.map((m) => (
+      {selectedChannelUsers?.map((m) => (
         <MemberInfo
           key={m.id}
           image="./assets/icons/discord-icon.png"
-          name={m.name}
+          name={m.username}
         />
       ))}
     </Container>

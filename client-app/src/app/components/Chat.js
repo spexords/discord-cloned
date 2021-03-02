@@ -1,22 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import Avatar from "./Avatar";
+import {
+  selectChannelState,
+  sendMsgToSubchannel,
+} from "../stores/channelSlice";
 import UserMessage from "./UserMessage";
+import { format } from "date-fns";
 
 const Container = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   padding: 15px;
+  overflow: hidden;
 `;
 
 const MessageList = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-y: auto;
 `;
 
 const MessageInput = styled.input`
+  margin-top: 20px;
   height: 50px;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -32,54 +40,36 @@ const MessageInput = styled.input`
 `;
 
 const Chat = () => {
-  
+  const { selectedSubchannel } = useSelector(selectChannelState);
+  const [content, setContent] = useState("");
+  const dispatch = useDispatch();
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      dispatch(
+        sendMsgToSubchannel({ id: selectedSubchannel?.id, content: content })
+      );
+      setContent("");
+    }
+  };
   return (
     <Container>
       <MessageList>
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
-        <UserMessage
-          image="./assets/icons/discord-icon.png"
-          name="Andrzejek"
-          date="13:22 22-01-2020"
-          content="How youuu doing ??"
-        />
+        {selectedSubchannel?.messages?.map((msg) => (
+          <UserMessage
+            key={msg.id}
+            image="./assets/icons/discord-icon.png"
+            name={msg.sender}
+            date={format(new Date(msg.date), "HH:mm dd-MM-yyyy")}
+            content={msg.content}
+          />
+        ))}
       </MessageList>
-      <MessageInput placeholder="Napisz na #Jazda cs" />
+      <MessageInput
+        placeholder={`Type to #${selectedSubchannel?.name || ""}`}
+        value={content}
+        onChange={(e) => setContent(e.currentTarget.value)}
+        onKeyDown={handleKeyDown}
+      />
     </Container>
   );
 };

@@ -1,5 +1,7 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { selectChannelState } from "../stores/channelSlice";
 import Chat from "./Chat";
 import MemberList from "./MemberList";
 
@@ -7,6 +9,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   background: rgb(54, 57, 63);
+  overflow: hidden;
   flex: 1;
 `;
 
@@ -32,15 +35,21 @@ const HeaderContainer = styled.div`
 const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
+  overflow: hidden;
   flex: 1;
 `;
 
 const MessagePanel = () => {
+  const { selectedSubchannel } = useSelector(selectChannelState);
   return (
     <Container>
       <HeaderContainer>
-        <img src="./assets/icons/hash-tag.svg" alt="hash" />
-        <h3>Jazda cs</h3>
+        {selectedSubchannel && (
+          <>
+            <img src="./assets/icons/hash-tag.svg" alt="hash" />
+            <h3>{selectedSubchannel.name}</h3>
+          </>
+        )}
       </HeaderContainer>
       <MainContainer>
         <Chat />

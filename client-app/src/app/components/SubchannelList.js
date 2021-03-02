@@ -1,7 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { selectChannelState } from "../stores/channelSlice";
+import {
+  fetchSubchannelDetails,
+  selectChannelState,
+} from "../stores/channelSlice";
 import UserInfo from "./UserInfo";
 
 const Containter = styled.div`
@@ -51,7 +54,7 @@ const SubheaderWrapper = styled.div`
   > h1 {
     margin-left: 5px;
     text-transform: uppercase;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     color: rgb(114, 118, 125);
   }
 `;
@@ -68,26 +71,34 @@ const SubchannelWrapper = styled.div`
   }
   > h1 {
     margin-left: 7px;
-    font-size: 0.75rem;
-    color: rgb(114, 118, 125);
+    font-size: 0.85rem;
+    color: ${props => props.selected ? "#ccd0d9"  : "#72767d"} 
+    
   }
 `;
 
 const SubchannelList = () => {
-  const { selectedChannel } = useSelector(selectChannelState);
+  const { selectedChannel, selectedSubchannel } = useSelector(selectChannelState);
+  const dispatch = useDispatch();
   return (
     <Containter>
       <ChannelNameWrapper>
-        <h3>Testuje</h3>
+        <h3>{selectedChannel?.name}</h3>
         <img src="./assets/icons/down-arrow.svg" alt="dropdown" />
       </ChannelNameWrapper>
       <SubchannelsWrapper>
-        <SubheaderWrapper>
-          <img alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
-          <h1>kanały tekstowe</h1>
-        </SubheaderWrapper>
+        {selectedChannel && (
+          <SubheaderWrapper>
+            <img alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
+            <h1>kanały tekstowe</h1>
+          </SubheaderWrapper>
+        )}
         {selectedChannel?.subchannels?.map((sc) => (
-          <SubchannelWrapper key={sc.id}>
+          <SubchannelWrapper
+            key={sc.id}
+            selected={selectedSubchannel?.id === sc.id}
+            onClick={() => dispatch(fetchSubchannelDetails(sc.id))}
+          >
             <img alt="hash" src="./assets/icons/hash-tag.svg" />
             <h1>{sc.name}</h1>
           </SubchannelWrapper>

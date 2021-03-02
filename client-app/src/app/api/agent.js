@@ -36,10 +36,17 @@ const User = {
 
 const Channels = {
   fetchAll: () => requests.get("/channels"),
-  fetchChannelDetails: (id) => requests.get(`/channels/${id}`)
+  fetchDetails: (id) => requests.get(`/channels/${id}`),
+  fetchUsers: (id) => requests.get(`channels/${id}/users`)
+}
+
+const Subchannels = {
+  fetchDetails: (id) => requests.get(`/subchannels/${id}`),
+  sendMessage: (id, values) => requests.post(`/subchannels/${id}/messages`, values)
 }
 
 export default {
   User,
-  Channels
+  Channels,
+  Subchannels
 };
