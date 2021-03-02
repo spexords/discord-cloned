@@ -1,54 +1,104 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import agent from "../api/agent";
 
-
-export const login = createAsyncThunk("user/login", async (values, {rejectWithValue}) => {
+export const login = createAsyncThunk(
+  "user/login",
+  async (values, { rejectWithValue }) => {
     try {
-        const user = await agent.User.login(values)
-        return user;
+      const user = await agent.User.login(values);
+      return user;
     } catch (e) {
-        return rejectWithValue(e?.data?.errors?.details);
+      return rejectWithValue(e?.data?.errors?.details);
     }
-})
+  }
+);
 
+export const fetchCurrentUser = createAsyncThunk(
+  "user/fetchCurrentUser",
+  async (_ ,{ rejectWithValue }) => {
+    try {
+      const user = await agent.User.current();
+      return user;
+    } catch (e) {
+      console.log(e);
+      return rejectWithValue(e?.data?.errors?.details);
+    }
+  }
+);
+
+export const register = createAsyncThunk(
+    "user/register",
+    async (values ,{ rejectWithValue }) => {
+      try {
+        await agent.User.register(values);
+      } catch (e) {
+        console.log(e);
+        return rejectWithValue(e?.data?.errors?.details);
+      }
+    }
+  );
+  
 
 export const userSlice = createSlice({
-    name: "user",
-    initialState:  {
-        user: null,
-        loading: false,
-        error: null
+  name: "user",
+  initialState: {
+    user: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    logout: (state) => {
+      window.localStorage.removeItem("jwt");
+      state.user = null;
     },
-    reducers: {
-        logout: (state) => {
-            window.localStorage.removeItem("jwt");
-            state.user = null;
-        }
-    },
-    extraReducers: builder => {
-        builder
-        .addCase(login.pending, (state, action) => {
-            state.loading = true
-            state.error = null;
-        })
-        .addCase(login.fulfilled, (state, action) => {
-            state.user = action.payload;
-            window.localStorage.setItem("jwt", state.user?.token)
-            state.loading = false
-        })
-        .addCase(login.rejected, (state, action) => {
-            state.error = action.payload;
-            state.loading = false;
-        })
-    }
-})
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+        state.user = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.user = action.payload;
+        window.localStorage.setItem("jwt", state.user?.token);
+        state.loading = false;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchCurrentUser.pending, (state, action) => {
+        state.user = null;
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        window.localStorage.setItem("jwt", state.user?.token);
+        state.loading = false;
+      })
+      .addCase(fetchCurrentUser.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(register.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+  },
+});
 
-export const {
-    logout
-} = userSlice.actions
+export const { logout } = userSlice.actions;
 
 export const selectUserState = (state) => state.user;
 export const selectLoggedIn = (state) => state.user.user !== null;
-
 
 export default userSlice.reducer;

@@ -15,36 +15,39 @@ export const fetchChannels = createAsyncThunk(
 
 export const fetchChannelDetails = createAsyncThunk(
   "channel/fetchChannelDetails",
-  async (id) => {
+  async (id, { rejectWithValue }) => {
     try {
       const selectedChannel = await agent.Channels.fetchDetails(id);
       return selectedChannel;
     } catch (e) {
       console.log(e?.data?.errors);
+      rejectWithValue(e?.data?.errors);
     }
   }
 );
 
 export const fetchChannelUsers = createAsyncThunk(
   "channel/fetchChannelUsers",
-  async (id) => {
+  async (id, { rejectWithValue }) => {
     try {
       const channelUsers = await agent.Channels.fetchUsers(id);
       return channelUsers;
     } catch (e) {
       console.log(e?.data?.errors);
+      rejectWithValue(e?.data?.errors);
     }
   }
 );
 
 export const fetchSubchannelDetails = createAsyncThunk(
   "channel/fetchSubchannelDetails",
-  async (id) => {
+  async (id, { rejectWithValue }) => {
     try {
       const selectedSubchannel = await agent.Subchannels.fetchDetails(id);
       return selectedSubchannel;
     } catch (e) {
       console.log(e?.data?.errors);
+      rejectWithValue(e?.data?.errors);
     }
   }
 );
@@ -56,12 +59,22 @@ export const sendMsgToSubchannel = createAsyncThunk(
       const message = {
         content,
       };
-      console.log(message)
       const messageEntity = await agent.Subchannels.sendMessage(id, message);
-      console.log(messageEntity);
       return messageEntity;
     } catch (e) {
       console.log(e);
+    }
+  }
+);
+
+export const createChannel = createAsyncThunk(
+  "message/createChannel",
+  async (channel, { rejectWithValue }) => {
+    try {
+      await agent.Channels.createChannel(channel);
+      return channel;
+    } catch (e) {
+      return rejectWithValue(e?.data?.errors?.details);
     }
   }
 );
@@ -146,6 +159,18 @@ export const channelSlice = createSlice({
         state.loading = false;
       })
       .addCase(sendMsgToSubchannel.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(createChannel.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createChannel.fulfilled, (state, action) => {
+        state.channels = [...state.channels, action.payload];
+        state.loading = false;
+      })
+      .addCase(createChannel.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

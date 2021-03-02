@@ -63,7 +63,7 @@ const ChannelList = () => {
 
   useEffect(() => {
     console.log("1");
-    if (channels !== null) {
+    if (channels !== null && channels.length > 0) {
       dispatch(fetchChannelDetails(channels[0]?.id));
     }
   }, [channels]);

@@ -14,16 +14,13 @@ const Conatiner = styled.div`
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.9);
   visibility: ${(props) => (props.opened ? "visible" : "hidden")};
-  > * {
-    z-index: 11;
-  }
 `;
 
 const Modal = () => {
   const dispatch = useDispatch();
   const ref = useRef();
   const { opened, body } = useSelector(selectModalState);
-  useOnClickOutside(ref, () => dispatch(closeModal()));
+  useOnClickOutside(ref, opened, () => dispatch(closeModal()));
   return (
     <Conatiner opened={opened}>
       <div ref={ref}>{body}</div>

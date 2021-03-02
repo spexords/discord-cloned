@@ -32,12 +32,15 @@ const requests = {
 
 const User = {
   login: (values) => requests.post("/user/login", values),
+  current: () => requests.get("/user"),
+  register: (values) => requests.post("/user/register", values)
 };
 
 const Channels = {
   fetchAll: () => requests.get("/channels"),
   fetchDetails: (id) => requests.get(`/channels/${id}`),
-  fetchUsers: (id) => requests.get(`channels/${id}/users`)
+  fetchUsers: (id) => requests.get(`channels/${id}/users`),
+  createChannel: (values) => requests.post("/channels", values)
 }
 
 const Subchannels = {

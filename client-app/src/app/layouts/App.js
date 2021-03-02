@@ -1,8 +1,8 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Modal from "../common/Modal";
-import { selectLoggedIn } from "../stores/userSlice";
+import { fetchCurrentUser, selectLoggedIn } from "../stores/userSlice";
 import DiscordApp from "./DiscordApp";
 import HomeScreen from "./HomeScreen";
 
@@ -17,7 +17,14 @@ const AppContainer = styled.div`
 `;
 
 const App = () => {
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectLoggedIn);
+  useEffect(() => {
+    const token = window.localStorage.getItem("jwt");
+    if (token) {
+      dispatch(fetchCurrentUser());
+    }
+  }, []);
   return (
     <>
       <Modal />
