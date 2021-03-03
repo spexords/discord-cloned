@@ -71,7 +71,7 @@ const ChannelList = () => {
   useEffect(() => {
     console.log("2");
     if (selectedChannel !== null) {
-      dispatch(fetchSubchannelDetails(selectedChannel.subchannels[0]?.id));
+      dispatch(fetchSubchannelDetails(selectedChannel?.subchannels[0]?.id));
       dispatch(fetchChannelUsers(selectedChannel?.id));
     }
   }, [selectedChannel]);

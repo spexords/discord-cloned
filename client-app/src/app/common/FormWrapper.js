@@ -13,8 +13,15 @@ export const FormWrapper = styled.div`
     align-self: center;
   }
   > h2 {
-    color: rgb(114, 118, 125);
+    color: ${(props) =>
+      props.selected ? "#aeb2b9" : "#72767d"};
     font-size: 1rem;
     align-self: center;
+    &::after {
+      content: "";
+      display: ${(props) => (props.selected ? "block" : "none")};
+      height: 3px;
+      background-color: white;
+    }
   }
 `;

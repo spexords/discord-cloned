@@ -5,7 +5,9 @@ import {
   fetchSubchannelDetails,
   selectChannelState,
 } from "../stores/channelSlice";
+import { openModal } from "../stores/modalSlice";
 import UserInfo from "./UserInfo";
+import NewSubchannelForm from "./NewSubchannelForm"
 
 const Containter = styled.div`
   display: flex;
@@ -46,11 +48,6 @@ const SubheaderWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  > img {
-    height: 8px;
-    object-fit: contain;
-    margin-left: -2px;
-  }
   > h1 {
     margin-left: 5px;
     text-transform: uppercase;
@@ -72,25 +69,43 @@ const SubchannelWrapper = styled.div`
   > h1 {
     margin-left: 7px;
     font-size: 0.85rem;
-    color: ${props => props.selected ? "#ccd0d9"  : "#72767d"} 
-    
+    color: ${(props) => (props.selected ? "#ccd0d9" : "#72767d")};
   }
 `;
 
+const ArrowButton = styled.img`
+  height: 8px;
+  object-fit: contain;
+  margin-left: -2px;
+`;
+
+const NewSubchannelButton = styled.img`
+  height: 18px;
+  object-fit: contain;
+  margin-left: auto;
+`;
+
 const SubchannelList = () => {
-  const { selectedChannel, selectedSubchannel } = useSelector(selectChannelState);
+  const { selectedChannel, selectedSubchannel } = useSelector(
+    selectChannelState
+  );
   const dispatch = useDispatch();
   return (
     <Containter>
       <ChannelNameWrapper>
         <h3>{selectedChannel?.name}</h3>
-        <img src="./assets/icons/down-arrow.svg" alt="dropdown" />
+        <img />
       </ChannelNameWrapper>
       <SubchannelsWrapper>
         {selectedChannel && (
           <SubheaderWrapper>
-            <img alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
+            <ArrowButton alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
             <h1>kanały tekstowe</h1>
+            <NewSubchannelButton
+              alt="subchannelButton"
+              src="./assets/icons/gray-plus.svg"
+              onClick={() => dispatch(openModal(<NewSubchannelForm/>))}
+            />
           </SubheaderWrapper>
         )}
         {selectedChannel?.subchannels?.map((sc) => (

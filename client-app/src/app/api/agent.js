@@ -39,13 +39,15 @@ const User = {
 const Channels = {
   fetchAll: () => requests.get("/channels"),
   fetchDetails: (id) => requests.get(`/channels/${id}`),
-  fetchUsers: (id) => requests.get(`channels/${id}/users`),
-  createChannel: (values) => requests.post("/channels", values)
+  fetchUsers: (id) => requests.get(`/channels/${id}/users`),
+  createChannel: (values) => requests.post("/channels", values),
+  createSubchannel: (id, values) => requests.post(`/channels/${id}/subchannels`, values),
+  joinChannel: (values) => requests.post("/channels/join", values)
 }
 
 const Subchannels = {
   fetchDetails: (id) => requests.get(`/subchannels/${id}`),
-  sendMessage: (id, values) => requests.post(`/subchannels/${id}/messages`, values)
+  sendMessage: (id, values) => requests.post(`/subchannels/${id}/messages`, values),
 }
 
 export default {
