@@ -1,6 +1,17 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
+  html {
+    font-size: 20px;
+    color: white;
+    font-family: 'PT Sans', sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+  }
+
 
   /* Scrollbar */
   /* width */

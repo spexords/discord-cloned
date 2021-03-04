@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import Error from "../common/Error";
+import { toast } from "react-toastify";
+import { closeModal } from "../stores/modalSlice";
 
 const NewSubchannelForm = () => {
   const dispatch = useDispatch();
@@ -16,7 +18,14 @@ const NewSubchannelForm = () => {
       ...values,
       id: uuidv4(),
     };
-    dispatch(createSubchannel({id: selectedChannel?.id, subchannel}));
+    dispatch(createSubchannel({ id: selectedChannel?.id, subchannel })).then(
+      (r) => {
+        if (!r.error) {
+          dispatch(closeModal());
+          toast.dark("Subchannel created");
+        }
+      }
+    );
   };
 
   return (

@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   fetchSubchannelDetails,
+  resetChannelErrors,
   selectChannelState,
 } from "../stores/channelSlice";
 import { openModal } from "../stores/modalSlice";
 import UserInfo from "./UserInfo";
-import NewSubchannelForm from "./NewSubchannelForm"
+import NewSubchannelForm from "./NewSubchannelForm";
 
 const Containter = styled.div`
   display: flex;
@@ -90,6 +91,10 @@ const SubchannelList = () => {
     selectChannelState
   );
   const dispatch = useDispatch();
+  const handleNewChannel = () => {
+    dispatch(resetChannelErrors());
+    dispatch(openModal(<NewSubchannelForm />));
+  };
   return (
     <Containter>
       <ChannelNameWrapper>
@@ -104,7 +109,7 @@ const SubchannelList = () => {
             <NewSubchannelButton
               alt="subchannelButton"
               src="./assets/icons/gray-plus.svg"
-              onClick={() => dispatch(openModal(<NewSubchannelForm/>))}
+              onClick={handleNewChannel}
             />
           </SubheaderWrapper>
         )}

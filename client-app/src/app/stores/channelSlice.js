@@ -122,6 +122,11 @@ export const channelSlice = createSlice({
     loading: false,
     error: null,
   },
+  reducers: {
+    resetChannelErrors: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchChannels.pending, (state, action) => {
@@ -236,6 +241,8 @@ export const channelSlice = createSlice({
       });
   },
 });
+
+export const { resetChannelErrors } = channelSlice.actions;
 
 export const selectChannelState = (state) => state.channel;
 

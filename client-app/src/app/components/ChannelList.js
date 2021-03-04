@@ -6,6 +6,7 @@ import {
   fetchChannels,
   fetchChannelUsers,
   fetchSubchannelDetails,
+  resetChannelErrors,
   selectChannelState,
 } from "../stores/channelSlice";
 
@@ -18,6 +19,19 @@ const Container = styled.div`
   flex-direction: column;
   width: 70px;
   background: #202225;
+  overflow: hidden;
+`;
+
+const ChannelsWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `;
 
 const ChannelCircledButton = styled.div`
@@ -58,15 +72,10 @@ const ChannelList = () => {
   const { channels, selectedChannel } = useSelector(selectChannelState);
   useEffect(() => {
     console.log("0");
-    dispatch(fetchChannels());
+    dispatch(fetchChannels()).then((r) =>
+      dispatch(fetchChannelDetails(r.payload[0]?.id))
+    );
   }, []);
-
-  useEffect(() => {
-    console.log("1");
-    if (channels !== null && channels.length > 0) {
-      dispatch(fetchChannelDetails(channels[0]?.id));
-    }
-  }, [channels]);
 
   useEffect(() => {
     console.log("2");
@@ -76,23 +85,28 @@ const ChannelList = () => {
     }
   }, [selectedChannel]);
 
+  const handleNewChannel = () => {
+    dispatch(resetChannelErrors());
+    dispatch(openModal(<NewChannelForm />));
+  };
+
   return (
     <Container>
-      {channels?.map((c) => (
-        <ChannelCircledButton
-          hasNotifications={true}
-          selected={selectedChannel?.id === c.id}
-          key={c.id}
-          onClick={() => {
-            dispatch(fetchChannelDetails(c.id));
-          }}
-        >
-          {c.name[0]}
-        </ChannelCircledButton>
-      ))}
-      <ChannelCircledButton
-        onClick={() => dispatch(openModal(<NewChannelForm />))}
-      >
+      <ChannelsWrapper>
+        {channels?.map((c) => (
+          <ChannelCircledButton
+            hasNotifications={true}
+            selected={selectedChannel?.id === c.id}
+            key={c.id}
+            onClick={() => {
+              dispatch(fetchChannelDetails(c.id));
+            }}
+          >
+            {c.name[0]}
+          </ChannelCircledButton>
+        ))}
+      </ChannelsWrapper>
+      <ChannelCircledButton onClick={handleNewChannel}>
         <img src="./assets/icons/plus.svg" alt="plus" />
       </ChannelCircledButton>
     </Container>

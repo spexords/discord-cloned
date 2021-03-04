@@ -20,7 +20,8 @@ const Container = styled.div`
 `;
 
 const MemberList = () => {
-  const {selectedChannelUsers} = useSelector(selectChannelState);
+  const {selectedChannelUsers, selectedChannel} = useSelector(selectChannelState);
+
   return (
     <Container>
       <h1>members</h1>
@@ -29,6 +30,7 @@ const MemberList = () => {
           key={m.id}
           image="./assets/icons/discord-icon.png"
           name={m.username}
+          isHost={selectedChannel?.creatorId === m.id}
         />
       ))}
     </Container>

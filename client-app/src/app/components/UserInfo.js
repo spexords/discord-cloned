@@ -1,7 +1,7 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { logout } from "../stores/userSlice";
+import { logout, selectUserState } from "../stores/userSlice";
 import Avatar from "./Avatar";
 
 const Container = styled.div`
@@ -35,12 +35,13 @@ const LogoutButton = styled.img`
 
 const UserInfo = () => {
   const dispatch = useDispatch()
+  const {user} = useSelector(selectUserState)
   return (
     <Container>
       <Avatar image="./assets/icons/discord-icon.png" />
       <UsernameContainer>
-        <h1>spexords</h1>
-        <p>#{"5a28edc2-2d94-4bbe-80df-a7936c67b999".slice(-4)}</p>
+        <h1>{user.username}</h1>
+        <p>#{user.id.slice(-4)}</p>
       </UsernameContainer>
       <LogoutButton src="./assets/icons/power-button.svg" onClick={() => dispatch(logout())}/>
     </Container>

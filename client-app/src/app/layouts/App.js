@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
 import Modal from "../common/Modal";
 import { fetchCurrentUser, selectLoggedIn } from "../stores/userSlice";
@@ -27,6 +28,7 @@ const App = () => {
   }, []);
   return (
     <>
+      <ToastContainer position="bottom-right"/>
       <Modal />
       <AppContainer>
         {isLoggedIn ? <DiscordApp /> : <HomeScreen />}

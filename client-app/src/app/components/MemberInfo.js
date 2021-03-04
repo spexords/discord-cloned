@@ -10,14 +10,20 @@ const Container = styled.div`
   > p {
     margin-left: 5px;
     font-size: 0.8rem;
+  } 
+  > img {
+    object-fit: contain;
+    height: 16px;
+    margin-left: 5px;
   }
 `;
 
-const MemberInfo = ({ image, name }) => {
+const MemberInfo = ({ image, name, isHost }) => {
   return (
     <Container>
       <Avatar image={image} />
       <p>{name}</p>
+      {isHost && (<img src="./assets/icons/crown.svg"/>)}
     </Container>
   );
 };

@@ -6,13 +6,19 @@ import Error from "../common/Error";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { register as registerUser, selectUserState } from "../stores/userSlice";
+import { toast } from "react-toastify";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
   const { register, handleSubmit, watch, errors } = useForm();
   const { loading, error } = useSelector(selectUserState);
   const onSubmit = (values) => {
-    dispatch(registerUser(values)).then(() => history.push("/"));
+    dispatch(registerUser(values)).then((r) => {
+      if (!r.error) {
+        history.push("/");
+        toast.dark("Account created")
+      }
+    });
   };
   return (
     <FormWrapper>
@@ -33,7 +39,7 @@ const RegisterForm = () => {
           })}
         />
         {errors.confirmPassword && <Error>Passwords do not match</Error>}
-        {error && <Error>error</Error>}
+        {error && <Error>{error}</Error>}
         <Button fluid loading={loading ? 1 : 0} type="submit">
           Register
         </Button>

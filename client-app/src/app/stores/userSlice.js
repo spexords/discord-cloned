@@ -20,7 +20,6 @@ export const fetchCurrentUser = createAsyncThunk(
       const user = await agent.User.current();
       return user;
     } catch (e) {
-      console.log(e);
       return rejectWithValue(e?.data?.errors?.details);
     }
   }

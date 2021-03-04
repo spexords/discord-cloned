@@ -12,6 +12,7 @@ import {
 import Error from "../common/Error";
 import { closeModal } from "../stores/modalSlice";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 
 const CreateOptionWrapper = styled.div`
   display: flex;
@@ -42,9 +43,19 @@ const NewChannelForm = () => {
         ...values,
         id: uuidv4(),
       };
-      dispatch(createChannel(channel));
+      dispatch(createChannel(channel)).then(r => {
+        if (!r.error) {
+          dispatch(closeModal())
+          toast.dark("Channel created")
+        }
+      });
     } else {
-      dispatch(joinChannel(values));
+      dispatch(joinChannel(values)).then(r => {
+        if (!r.error) {
+          dispatch(closeModal())
+          toast.dark("Channel joined")
+        }
+      });
     }
   };
 
