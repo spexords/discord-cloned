@@ -12,8 +12,8 @@ const Container = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 15px;
   overflow: hidden;
+  padding: 15px 0;
 `;
 
 const MessageList = styled.div`
@@ -21,10 +21,12 @@ const MessageList = styled.div`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
+  margin-bottom: 5px;
+  margin-right: 2px;
 `;
 
 const MessageInput = styled.input`
-  margin-top: 20px;
+  margin: 0 10px;
   height: 50px;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -57,8 +59,9 @@ const Chat = () => {
         {selectedSubchannel?.messages?.map((msg) => (
           <UserMessage
             key={msg.id}
+            id={msg.id}
             image="./assets/icons/discord-icon.png"
-            name={msg.sender}
+            sender={msg.sender}
             date={format(new Date(msg.date), "HH:mm dd-MM-yyyy")}
             content={msg.content}
           />

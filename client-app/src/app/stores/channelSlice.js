@@ -112,6 +112,20 @@ export const createSubchannel = createAsyncThunk(
   }
 );
 
+export const deleteMessageFromSubchannel = createAsyncThunk(
+  "channel/deleteMessageFromSubchannel",
+  async (id, { rejectWithValue }) => {
+    try {
+      await agent.Messages.remove(id);
+      return id;
+    } catch (e) {
+      console.log(e);
+      const errorMsg = e?.data?.errors?.details;
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
 export const channelSlice = createSlice({
   name: "channel",
   initialState: {
@@ -236,6 +250,20 @@ export const channelSlice = createSlice({
         state.loading = false;
       })
       .addCase(createSubchannel.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(deleteMessageFromSubchannel.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteMessageFromSubchannel.fulfilled, (state, action) => {
+        state.selectedSubchannel.messages = state.selectedSubchannel?.messages.filter(
+          (m) => m.id !== action.payload
+        );
+        state.loading = false;
+      })
+      .addCase(deleteMessageFromSubchannel.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

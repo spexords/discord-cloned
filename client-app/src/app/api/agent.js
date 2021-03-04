@@ -33,7 +33,7 @@ const requests = {
 const User = {
   login: (values) => requests.post("/user/login", values),
   current: () => requests.get("/user"),
-  register: (values) => requests.post("/user/register", values)
+  register: (values) => requests.post("/user/register", values),
 };
 
 const Channels = {
@@ -41,17 +41,24 @@ const Channels = {
   fetchDetails: (id) => requests.get(`/channels/${id}`),
   fetchUsers: (id) => requests.get(`/channels/${id}/users`),
   createChannel: (values) => requests.post("/channels", values),
-  createSubchannel: (id, values) => requests.post(`/channels/${id}/subchannels`, values),
-  joinChannel: (values) => requests.post("/channels/join", values)
-}
+  createSubchannel: (id, values) =>
+    requests.post(`/channels/${id}/subchannels`, values),
+  joinChannel: (values) => requests.post("/channels/join", values),
+};
+
+const Messages = {
+  remove: (id) => requests.delete(`/messages/${id}`),
+};
 
 const Subchannels = {
   fetchDetails: (id) => requests.get(`/subchannels/${id}`),
-  sendMessage: (id, values) => requests.post(`/subchannels/${id}/messages`, values),
-}
+  sendMessage: (id, values) =>
+    requests.post(`/subchannels/${id}/messages`, values),
+};
 
 export default {
   User,
   Channels,
-  Subchannels
+  Subchannels,
+  Messages,
 };

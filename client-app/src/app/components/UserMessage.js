@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { deleteMessageFromSubchannel, selectChannelState } from "../stores/channelSlice";
+import { selectUserState } from "../stores/userSlice";
 import Avatar from "./Avatar";
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 15px;
+  cursor: pointer;
+  padding: 4px 15px;
+  margin-bottom: 8px;
   color: white;
+  &:hover {
+    background-color: #32353b;
+  }
 `;
 const MessageWrapper = styled.div`
   display: flex;
@@ -32,17 +40,52 @@ const NameWrapper = styled.div`
   }
 `;
 
-const UserMessage = ({ image, name, date, content }) => {
+const DeleteButton = styled.img`
+  margin-left: auto;
+  height: 20px;
+  object-fit: contain;
+`;
+
+const UserMessage = ({ id, image, sender, date, content }) => {
+  const { user } = useSelector(selectUserState);
+  const { selectedChannel } = useSelector(selectChannelState);
+  const [hovered, setHovered] = useState(false);
+  const [binClickedOnce, setBinClickedOnce] = useState(false);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    setBinClickedOnce(false);
+  }, [hovered]);
+
+  const handleBinClick = () => {
+    if (binClickedOnce) {
+      dispatch(deleteMessageFromSubchannel(id))
+    }
+    setBinClickedOnce(true);
+  };
   return (
-    <Container>
+    <Container
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <Avatar image={image} />
       <MessageWrapper>
         <NameWrapper>
-          <h1>{name}</h1>
+          <h1>{sender}</h1>
           <p>{date}</p>
         </NameWrapper>
         <p>{content}</p>
       </MessageWrapper>
+      {hovered &&
+        (user.username === sender ||
+          user?.id === selectedChannel?.creatorId) && (
+          <DeleteButton
+            onClick={handleBinClick}
+            alt="trash"
+            src={`./assets/icons/${
+              !binClickedOnce ? "trash" : "trash-red"
+            }.svg`}
+          />
+        )}
     </Container>
   );
 };
