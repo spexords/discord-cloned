@@ -70,6 +70,7 @@ const Chat = () => {
       <MessageInput
         placeholder={`Type to #${selectedSubchannel?.name || ""}`}
         value={content}
+        disabled={selectedSubchannel === null}
         onChange={(e) => setContent(e.currentTarget.value)}
         onKeyDown={handleKeyDown}
       />

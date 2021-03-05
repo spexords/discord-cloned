@@ -71,16 +71,16 @@ const ChannelList = () => {
   const dispatch = useDispatch();
   const { channels, selectedChannel } = useSelector(selectChannelState);
   useEffect(() => {
-    console.log("0");
     dispatch(fetchChannels()).then((r) =>
       dispatch(fetchChannelDetails(r.payload[0]?.id))
     );
   }, []);
 
   useEffect(() => {
-    console.log("2");
     if (selectedChannel !== null) {
-      dispatch(fetchSubchannelDetails(selectedChannel?.subchannels[0]?.id));
+      if (selectedChannel?.subchannels?.length > 0) {
+        dispatch(fetchSubchannelDetails(selectedChannel?.subchannels[0]?.id));
+      }
       dispatch(fetchChannelUsers(selectedChannel?.id));
     }
   }, [selectedChannel]);

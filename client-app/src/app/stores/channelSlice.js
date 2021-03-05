@@ -126,6 +126,35 @@ export const deleteMessageFromSubchannel = createAsyncThunk(
   }
 );
 
+export const leaveChannel = createAsyncThunk(
+  "channel/leaveChannel",
+  async (id, { rejectWithValue }) => {
+    try {
+      await agent.Channels.leaveChannel(id);
+      return id;
+    } catch (e) {
+      console.log(e);
+      const errorMsg = e?.data?.errors?.details;
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const deleteChannel = createAsyncThunk(
+  "channel/deleteChannel",
+  async (id, { rejectWithValue }) => {
+    try {
+      await agent.Channels.deleteChannel(id);
+      return id;
+    } catch (e) {
+      console.log(e);
+      const errorMsg = e?.data?.errors?.details;
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
+
 export const channelSlice = createSlice({
   name: "channel",
   initialState: {
@@ -264,6 +293,36 @@ export const channelSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteMessageFromSubchannel.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(leaveChannel.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(leaveChannel.fulfilled, (state, action) => {
+        state.loading = false;
+        state.channels = state.channels.filter(c => c.id !== action.payload)
+        state.selectedSubchannel = null;
+        state.selectedChannelUsers = null;
+        state.selectedChannel = state.channels[0]
+      })
+      .addCase(leaveChannel.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(deleteChannel.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteChannel.fulfilled, (state, action) => {
+        state.loading = false;
+        state.channels = state.channels.filter(c => c.id !== action.payload)
+        state.selectedSubchannel = null
+        state.selectedChannelUsers = null;
+        state.selectedChannel = state.channels[0]
+      })
+      .addCase(deleteChannel.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

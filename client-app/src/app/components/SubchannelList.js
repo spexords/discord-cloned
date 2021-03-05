@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
@@ -9,12 +9,13 @@ import {
 import { openModal } from "../stores/modalSlice";
 import UserInfo from "./UserInfo";
 import NewSubchannelForm from "./NewSubchannelForm";
+import ChannelMenu from "./ChannelMenu";
 
 const Containter = styled.div`
   display: flex;
   flex-direction: column;
   width: 250px;
-  background: rgb(47, 49, 54);
+  background-color: rgb(47, 49, 54);
 `;
 
 const ChannelNameWrapper = styled.div`
@@ -26,6 +27,9 @@ const ChannelNameWrapper = styled.div`
   border-bottom: 1px solid rgb(35, 37, 39);
   align-items: center;
   justify-content: space-between;
+  &:hover {
+    background-color: #34373c;
+  }
   > img {
     height: 15px;
     object-fit: contain;
@@ -40,7 +44,8 @@ const SubchannelsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  margin-top: 15px;
+  position: relative;
+  margin-top: 10px;
   padding: 0 7px;
 `;
 
@@ -90,6 +95,7 @@ const SubchannelList = () => {
   const { selectedChannel, selectedSubchannel } = useSelector(
     selectChannelState
   );
+  const [menuOpened, setMenuOpened] = useState(false);
   const dispatch = useDispatch();
   const handleNewChannel = () => {
     dispatch(resetChannelErrors());
@@ -97,15 +103,19 @@ const SubchannelList = () => {
   };
   return (
     <Containter>
-      <ChannelNameWrapper>
+      <ChannelNameWrapper onClick={() => setMenuOpened(!menuOpened)}>
         <h3>{selectedChannel?.name}</h3>
-        <img />
+        <img
+          src={`./assets/icons/${menuOpened ? "close" : "down-arrow"}.svg`}
+          alt="menu"
+        />
       </ChannelNameWrapper>
       <SubchannelsWrapper>
+        {menuOpened && <ChannelMenu closeCallback={() => setMenuOpened(false)} />}
         {selectedChannel && (
           <SubheaderWrapper>
             <ArrowButton alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
-            <h1>kanały tekstowe</h1>
+            <h1>Text subchannels</h1>
             <NewSubchannelButton
               alt="subchannelButton"
               src="./assets/icons/gray-plus.svg"

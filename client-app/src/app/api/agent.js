@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { id } from "date-fns/locale";
 
 Axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -41,9 +42,12 @@ const Channels = {
   fetchDetails: (id) => requests.get(`/channels/${id}`),
   fetchUsers: (id) => requests.get(`/channels/${id}/users`),
   createChannel: (values) => requests.post("/channels", values),
+  deleteChannel: (id) => requests.delete(`/channels/${id}`),
   createSubchannel: (id, values) =>
     requests.post(`/channels/${id}/subchannels`, values),
   joinChannel: (values) => requests.post("/channels/join", values),
+  leaveChannel: (id) => requests.post(`/channels/${id}/leave`, {})
+  
 };
 
 const Messages = {
