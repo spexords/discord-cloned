@@ -21,8 +21,8 @@ const MessageList = styled.div`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
+  margin-right: 4px;
   margin-bottom: 5px;
-  margin-right: 2px;
 `;
 
 const MessageInput = styled.input`

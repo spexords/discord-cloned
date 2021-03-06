@@ -4,18 +4,19 @@ import Button from "./Button";
 import { FormWrapper } from "./FormWrapper";
 
 const ButtonWrapper = styled.div`
-  display: flex;
-  justify-items: space-between;
-  margin-left: auto;
+  display: grid;
+  column-gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
 `;
 
-const ConfirmForm = ({ text, confirmCallback, declineCallback }) => {
+const ConfirmForm = ({header, content, confirmCallback, declineCallback }) => {
   return (
     <FormWrapper>
-      <h1>{text}</h1>
+      <h1>{header}</h1>
+      <h2>{content}</h2>
       <ButtonWrapper>
         <Button
-          style={{ marginRight: "20px" }}
+          danger
           onClick={() => confirmCallback()}
         >
           Yes

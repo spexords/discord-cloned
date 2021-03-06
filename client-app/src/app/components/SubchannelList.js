@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
@@ -10,6 +10,7 @@ import { openModal } from "../stores/modalSlice";
 import UserInfo from "./UserInfo";
 import NewSubchannelForm from "./NewSubchannelForm";
 import ChannelMenu from "./ChannelMenu";
+import { useOnClickOutside } from "../hooks/useOnClickOutside";
 
 const Containter = styled.div`
   display: flex;
@@ -44,8 +45,11 @@ const SubchannelsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-y: scroll;
   position: relative;
   margin-top: 10px;
+  margin-right: 4px;
+
   padding: 0 7px;
 `;
 
@@ -53,6 +57,7 @@ const SubheaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 5px 0px;
   cursor: pointer;
   > h1 {
     margin-left: 5px;
@@ -66,9 +71,13 @@ const SubchannelWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 3px 15px;
+  background-color: ${(props) => props.selected && "#34373c"};
+  padding: 5px 15px;
   margin-top: 4px;
   cursor: pointer;
+  &:hover {
+    background-color: #34373c;
+  }
   > img {
     height: 12px;
   }
@@ -96,22 +105,38 @@ const SubchannelList = () => {
     selectChannelState
   );
   const [menuOpened, setMenuOpened] = useState(false);
+  const ref = useRef();
   const dispatch = useDispatch();
+
+  const handleMenuClick = () => {
+    setMenuOpened(!menuOpened);
+  };
+
   const handleNewChannel = () => {
     dispatch(resetChannelErrors());
     dispatch(openModal(<NewSubchannelForm />));
   };
   return (
     <Containter>
-      <ChannelNameWrapper onClick={() => setMenuOpened(!menuOpened)}>
-        <h3>{selectedChannel?.name}</h3>
-        <img
-          src={`./assets/icons/${menuOpened ? "close" : "down-arrow"}.svg`}
-          alt="menu"
-        />
-      </ChannelNameWrapper>
+      {selectedChannel && (
+        <ChannelNameWrapper
+          onClick={() => setMenuOpened(!menuOpened)}
+          ref={ref}
+        >
+          <h3>{selectedChannel.name}</h3>
+          <img
+            src={`./assets/icons/${menuOpened ? "close" : "down-arrow"}.svg`}
+            alt="menu"
+          />
+        </ChannelNameWrapper>
+      )}
       <SubchannelsWrapper>
-        {menuOpened && <ChannelMenu closeCallback={() => setMenuOpened(false)} />}
+        {menuOpened && (
+          <ChannelMenu
+            closeCallback={() => setMenuOpened(false)}
+            trigger={ref}
+          />
+        )}
         {selectedChannel && (
           <SubheaderWrapper>
             <ArrowButton alt="arrow" src="./assets/icons/down-arrow-gray.svg" />

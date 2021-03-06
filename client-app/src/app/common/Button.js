@@ -8,7 +8,8 @@ const baseStyle = css`
   font-weight: bold;
   height: 48px;
   color: white;
-  background: rgb(113, 135, 221);
+  background-color: ${props => props.danger ? "#f04747" : "#7187dd"};
+  background-color: ${props => props.transparent && "transparent"};
   cursor: pointer;
   border: none;
   border-radius: 5px;

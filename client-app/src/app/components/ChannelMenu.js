@@ -7,10 +7,12 @@ import { useOnClickOutside } from "../hooks/useOnClickOutside";
 import {
   leaveChannel,
   selectChannelState,
-  deleteChannel,
+  changePasswordChannel,
+  resetChannelErrors,
 } from "../stores/channelSlice";
 import { closeModal, openModal } from "../stores/modalSlice";
 import { selectUserState } from "../stores/userSlice";
+import ChangeChannelPasswordForm from "./ChangeChannelPasswordForm";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -35,19 +37,20 @@ const Option = styled.div`
   }
 `;
 
-const ChannelMenu = ({ closeCallback }) => {
+const ChannelMenu = ({ closeCallback, trigger }) => {
   const { selectedChannel } = useSelector(selectChannelState);
   const { user } = useSelector(selectUserState);
   const dispatch = useDispatch();
   const ref = useRef();
-  useOnClickOutside(ref, true, () => closeCallback());
+  useOnClickOutside(ref, true, () => closeCallback(), trigger);
 
   const handleLeaveChannel = () => {
     closeCallback();
     dispatch(
       openModal(
         <ConfirmForm
-          text={`Do you really want to leave ${selectedChannel?.name} channel?`}
+          header={`Leaving "${selectedChannel?.name}"`}
+          content="Do you really want to leave this channel?"
           confirmCallback={() =>
             dispatch(leaveChannel(selectedChannel?.id)).then((r) => {
               if (!r.error) {
@@ -67,12 +70,13 @@ const ChannelMenu = ({ closeCallback }) => {
     dispatch(
       openModal(
         <ConfirmForm
-          text={`Do you really want to remove ${selectedChannel?.name} channel?`}
+          header={`Deleting "${selectedChannel?.name}"`}
+          content="Do you really want to delete this channel?"
           confirmCallback={() =>
-            dispatch(deleteChannel(selectedChannel?.id)).then((r) => {
+            dispatch(changePasswordChannel(selectedChannel?.id)).then((r) => {
               if (!r.error) {
                 dispatch(closeModal());
-                toast.dark("You removed the channel");
+                toast.dark("You deleted the channel");
               }
             })
           }
@@ -82,11 +86,21 @@ const ChannelMenu = ({ closeCallback }) => {
     );
   };
 
+  const handleChangePassword = () => {
+    closeCallback();
+    dispatch(resetChannelErrors())
+    dispatch(
+      openModal(
+       <ChangeChannelPasswordForm/>
+      )
+    );
+  };
+
   return (
     <Wrapper ref={ref}>
       {user.id === selectedChannel?.creatorId && (
         <>
-          <Option>Change password</Option>
+          <Option onClick={handleChangePassword}>Change password</Option>
           <Option onClick={handleDeleteChannel}>Delete channel</Option>
         </>
       )}

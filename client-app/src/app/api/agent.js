@@ -43,6 +43,7 @@ const Channels = {
   fetchUsers: (id) => requests.get(`/channels/${id}/users`),
   createChannel: (values) => requests.post("/channels", values),
   deleteChannel: (id) => requests.delete(`/channels/${id}`),
+  changePasswordChannel: (id, values) => requests.put(`/channels/${id}/password`, values),
   createSubchannel: (id, values) =>
     requests.post(`/channels/${id}/subchannels`, values),
   joinChannel: (values) => requests.post("/channels/join", values),

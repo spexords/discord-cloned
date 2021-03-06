@@ -20,11 +20,13 @@ const Container = styled.div`
 `;
 
 const MemberList = () => {
-  const {selectedChannelUsers, selectedChannel} = useSelector(selectChannelState);
+  const { selectedChannelUsers, selectedChannel } = useSelector(
+    selectChannelState
+  );
 
   return (
     <Container>
-      <h1>members</h1>
+      {selectedChannelUsers?.length > 0 && <h1>members</h1>}
       {selectedChannelUsers?.map((m) => (
         <MemberInfo
           key={m.id}

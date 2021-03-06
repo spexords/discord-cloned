@@ -19,7 +19,6 @@ const Container = styled.div`
   flex-direction: column;
   width: 70px;
   background: #202225;
-  overflow: hidden;
 `;
 
 const ChannelsWrapper = styled.div`
@@ -43,9 +42,8 @@ const ChannelCircledButton = styled.div`
   width: 50px;
   height: 50px;
   margin-bottom: 8px;
-  border-radius: 100%;
-  background-color: rgb(54, 57, 63);
-
+  border-radius: ${(props) => (props.selected ? "35%" : "100%")};
+  background-color: ${(props) => (props.selected ? "#7187dd" : " #36393f")};
   &:hover {
     border-radius: 35%;
   }
@@ -53,14 +51,13 @@ const ChannelCircledButton = styled.div`
     height: 20px;
     object-fit: contain;
   }
-
   &::before {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 20px;
     position: absolute;
-    left: -14.5px;
-    top: calc(50% - 4.5px);
-    background-color: white;
+    left: -5px;
+    top: calc(50% - 10px);
+    background-color: #ffffff;
     border-radius: 50%;
     content: "";
     display: ${(props) => (props.selected ? "inline" : "none")};

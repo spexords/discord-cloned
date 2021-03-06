@@ -154,6 +154,21 @@ export const deleteChannel = createAsyncThunk(
   }
 );
 
+export const changePasswordChannel = createAsyncThunk(
+  "channel/changePasswordChannel",
+  async ({id, values}, { rejectWithValue }) => {
+    try {
+      await agent.Channels.changePasswordChannel(id, values);
+      return id;
+    } catch (e) {
+      console.log(e);
+      const errorMsg = e?.data?.errors?.details;
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
+
 
 export const channelSlice = createSlice({
   name: "channel",
@@ -305,7 +320,7 @@ export const channelSlice = createSlice({
         state.channels = state.channels.filter(c => c.id !== action.payload)
         state.selectedSubchannel = null;
         state.selectedChannelUsers = null;
-        state.selectedChannel = state.channels[0]
+        state.selectedChannel = null;
       })
       .addCase(leaveChannel.rejected, (state, action) => {
         state.error = action.payload;
@@ -320,9 +335,20 @@ export const channelSlice = createSlice({
         state.channels = state.channels.filter(c => c.id !== action.payload)
         state.selectedSubchannel = null
         state.selectedChannelUsers = null;
-        state.selectedChannel = state.channels[0]
+        state.selectedChannel = null;
       })
       .addCase(deleteChannel.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(changePasswordChannel.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(changePasswordChannel.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(changePasswordChannel.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });
