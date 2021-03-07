@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import Avatar from "./Avatar";
+import { selectUserState } from "../stores/userSlice";
+import { selectChannelState } from "../stores/channelSlice";
+import DefaultAvatar from "./DefaultAvatar";
+import MemberMenu from "./MemberMenu";
 
-const Container = styled.div`
+const Wrapper = styled.div`
   display: flex;
+  position: relative;
   flex-direction: row;
   align-items: center;
+  cursor: pointer;
   margin-top: 8px;
   > p {
     margin-left: 5px;
     font-size: 0.8rem;
-  } 
+  }
   > img {
     object-fit: contain;
     height: 16px;
@@ -18,13 +24,30 @@ const Container = styled.div`
   }
 `;
 
-const MemberInfo = ({ image, name, isHost }) => {
+const MemberInfo = ({ id, image, name, isHost }) => {
+  const [menuOpened, setMenuOpened] = useState(false);
+  const { user } = useSelector(selectUserState);
+  const { selectedChannel } = useSelector(selectChannelState);
+  const ref = useRef();
+  const onUserClick = () => {
+    if (user?.id === selectedChannel?.creatorId && user?.id !== id) {
+      setMenuOpened(!menuOpened);
+    }
+  };
   return (
-    <Container>
-      <Avatar image={image} />
+    <Wrapper ref={ref} onClick={onUserClick}>
+      <DefaultAvatar image={image} />
       <p>{name}</p>
-      {isHost && (<img src="./assets/icons/crown.svg"/>)}
-    </Container>
+      {isHost && <img src="./assets/icons/crown.svg" />}
+      {menuOpened && (
+        <MemberMenu
+          id={id}
+          name={name}
+          trigger={ref}
+          closeCallback={() => setMenuOpened(false)}
+        />
+      )}
+    </Wrapper>
   );
 };
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { deleteMessageFromSubchannel, selectChannelState } from "../stores/channelSlice";
 import { selectUserState } from "../stores/userSlice";
-import Avatar from "./Avatar";
+import DefaultAvatar from "./DefaultAvatar";
 
 const Container = styled.div`
   display: flex;
@@ -68,7 +68,7 @@ const UserMessage = ({ id, image, sender, date, content }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Avatar image={image} />
+      <DefaultAvatar image={image} />
       <MessageWrapper>
         <NameWrapper>
           <h1>{sender}</h1>

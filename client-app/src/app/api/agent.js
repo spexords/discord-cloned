@@ -47,8 +47,8 @@ const Channels = {
   createSubchannel: (id, values) =>
     requests.post(`/channels/${id}/subchannels`, values),
   joinChannel: (values) => requests.post("/channels/join", values),
-  leaveChannel: (id) => requests.post(`/channels/${id}/leave`, {})
-  
+  leaveChannel: (id) => requests.post(`/channels/${id}/leave`, {}),
+  kickUser: (id, uid) => requests.delete(`/channels/${id}/users/${uid}`)
 };
 
 const Messages = {

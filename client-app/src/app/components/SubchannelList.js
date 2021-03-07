@@ -108,9 +108,6 @@ const SubchannelList = () => {
   const ref = useRef();
   const dispatch = useDispatch();
 
-  const handleMenuClick = () => {
-    setMenuOpened(!menuOpened);
-  };
 
   const handleNewChannel = () => {
     dispatch(resetChannelErrors());

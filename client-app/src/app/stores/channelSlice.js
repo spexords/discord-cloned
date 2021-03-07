@@ -156,7 +156,7 @@ export const deleteChannel = createAsyncThunk(
 
 export const changePasswordChannel = createAsyncThunk(
   "channel/changePasswordChannel",
-  async ({id, values}, { rejectWithValue }) => {
+  async ({ id, values }, { rejectWithValue }) => {
     try {
       await agent.Channels.changePasswordChannel(id, values);
       return id;
@@ -168,7 +168,19 @@ export const changePasswordChannel = createAsyncThunk(
   }
 );
 
-
+export const kickUserChannel = createAsyncThunk(
+  "channel/kickUserChannel",
+  async ({ cid, uid }, { rejectWithValue }) => {
+    try {
+      await agent.Channels.kickUser(cid, uid);
+      return uid;
+    } catch (e) {
+      console.log(e);
+      const errorMsg = e?.data?.errors?.details;
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
 
 export const channelSlice = createSlice({
   name: "channel",
@@ -317,7 +329,7 @@ export const channelSlice = createSlice({
       })
       .addCase(leaveChannel.fulfilled, (state, action) => {
         state.loading = false;
-        state.channels = state.channels.filter(c => c.id !== action.payload)
+        state.channels = state.channels.filter((c) => c.id !== action.payload);
         state.selectedSubchannel = null;
         state.selectedChannelUsers = null;
         state.selectedChannel = null;
@@ -332,8 +344,8 @@ export const channelSlice = createSlice({
       })
       .addCase(deleteChannel.fulfilled, (state, action) => {
         state.loading = false;
-        state.channels = state.channels.filter(c => c.id !== action.payload)
-        state.selectedSubchannel = null
+        state.channels = state.channels.filter((c) => c.id !== action.payload);
+        state.selectedSubchannel = null;
         state.selectedChannelUsers = null;
         state.selectedChannel = null;
       })
@@ -349,6 +361,20 @@ export const channelSlice = createSlice({
         state.loading = false;
       })
       .addCase(changePasswordChannel.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(kickUserChannel.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(kickUserChannel.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedChannelUsers = state.selectedChannelUsers.filter(
+          (uc) => uc.id !== action.payload
+        );
+      })
+      .addCase(kickUserChannel.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

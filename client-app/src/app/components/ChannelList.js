@@ -13,17 +13,12 @@ import {
 import { openModal } from "../stores/modalSlice";
 import NewChannelForm from "./NewChannelForm";
 
-const Container = styled.div`
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  width: 70px;
-  background: #202225;
-`;
-
 const ChannelsWrapper = styled.div`
+padding: 15px 0px;
+  width: 70px;
   display: flex;
-  flex: 1;
+  background-color: #202225;
+  align-items: center;
   flex-direction: column;
   overflow-y: scroll;
   &::-webkit-scrollbar {
@@ -53,12 +48,12 @@ const ChannelCircledButton = styled.div`
   }
   &::before {
     width: 10px;
-    height: 20px;
+    height: 30px;
     position: absolute;
-    left: -5px;
-    top: calc(50% - 10px);
+    left: -15px;
+    top: calc(50% - 15px);
     background-color: #ffffff;
-    border-radius: 50%;
+    border-radius: 35%;
     content: "";
     display: ${(props) => (props.selected ? "inline" : "none")};
   }
@@ -88,25 +83,23 @@ const ChannelList = () => {
   };
 
   return (
-    <Container>
-      <ChannelsWrapper>
-        {channels?.map((c) => (
-          <ChannelCircledButton
-            hasNotifications={true}
-            selected={selectedChannel?.id === c.id}
-            key={c.id}
-            onClick={() => {
-              dispatch(fetchChannelDetails(c.id));
-            }}
-          >
-            {c.name[0]}
-          </ChannelCircledButton>
-        ))}
-      </ChannelsWrapper>
+    <ChannelsWrapper>
+      {channels?.map((c) => (
+        <ChannelCircledButton
+          hasNotifications={true}
+          selected={selectedChannel?.id === c.id}
+          key={c.id}
+          onClick={() => {
+            dispatch(fetchChannelDetails(c.id));
+          }}
+        >
+          {c.name[0]}
+        </ChannelCircledButton>
+      ))}
       <ChannelCircledButton onClick={handleNewChannel}>
         <img src="./assets/icons/plus.svg" alt="plus" />
       </ChannelCircledButton>
-    </Container>
+    </ChannelsWrapper>
   );
 };
 

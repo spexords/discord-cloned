@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import Settings from "../layouts/Settings";
 import { logout, selectUserState } from "../stores/userSlice";
-import Avatar from "./Avatar";
+import DefaultAvatar from "./DefaultAvatar";
 
 const Container = styled.div`
   cursor: pointer;
@@ -11,6 +12,8 @@ const Container = styled.div`
   align-items: center;
   padding: 10px;
   background: rgb(41, 43, 47);
+  img {
+  }
 `;
 
 const UsernameContainer = styled.div`
@@ -27,23 +30,35 @@ const UsernameContainer = styled.div`
   }
 `;
 
-const LogoutButton = styled.img`
+const IconsWrapper = styled.div`
+  margin-left: auto;
+`;
+
+const MenuIcon = styled.img`
   height: 25px;
   object-fit: contain;
-  margin-left: auto;
-`
+`;
 
 const UserInfo = () => {
-  const dispatch = useDispatch()
-  const {user} = useSelector(selectUserState)
+  const dispatch = useDispatch();
+  const { user } = useSelector(selectUserState);
+  const [settingsOpened, setSettingsOpened] = useState(false);
+  if (settingsOpened) {
+    return <Settings closeCallback={() => setSettingsOpened(false)} />;
+  }
   return (
     <Container>
-      <Avatar image="./assets/icons/discord-icon.png" />
+      <DefaultAvatar/>
       <UsernameContainer>
         <h1>{user.username}</h1>
         <p>#{user.id.slice(-4)}</p>
       </UsernameContainer>
-      <LogoutButton src="./assets/icons/power-button.svg" onClick={() => dispatch(logout())}/>
+      <IconsWrapper>
+        <MenuIcon
+          src="./assets/icons/settings.svg"
+          onClick={() => setSettingsOpened(true)}
+        />
+      </IconsWrapper>
     </Container>
   );
 };
