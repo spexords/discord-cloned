@@ -13,6 +13,7 @@ import {
 import { openModal } from "../stores/modalSlice";
 import NewChannelForm from "./NewChannelForm";
 
+
 const ChannelsWrapper = styled.div`
 padding: 15px 0px;
   width: 70px;
@@ -61,10 +62,13 @@ const ChannelCircledButton = styled.div`
 
 const ChannelList = () => {
   const dispatch = useDispatch();
-  const { channels, selectedChannel } = useSelector(selectChannelState);
+  const { channels, selectedChannel, selectedSubchannel } = useSelector(selectChannelState);
   useEffect(() => {
-    dispatch(fetchChannels()).then((r) =>
-      dispatch(fetchChannelDetails(r.payload[0]?.id))
+    dispatch(fetchChannels())
+    .then((r) => dispatch(fetchChannelDetails(r.payload[0]?.id))
+    // .then((e) =>
+    //     (createHubConnection(e.payload?.id))
+    // )
     );
   }, []);
 
@@ -76,6 +80,12 @@ const ChannelList = () => {
       dispatch(fetchChannelUsers(selectedChannel?.id));
     }
   }, [selectedChannel]);
+
+  // // useEffect(() => {
+  // //   if(selectedSubchannel !== null) {
+  // //     dispatch(createHubConnection(selectedSubchannel?.id))
+  // //   }
+  // // }, [selectedSubchannel])
 
   const handleNewChannel = () => {
     dispatch(resetChannelErrors());

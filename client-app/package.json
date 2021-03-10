@@ -17,6 +17,7 @@
     "react-scripts": "4.0.3",
     "react-toastify": "^7.0.3",
     "redux": "^4.0.5",
+    "redux-signalr": "^1.2.0",
     "styled-components": "^5.2.1",
     "uuid4": "^2.0.2",
     "web-vitals": "^1.1.0"
