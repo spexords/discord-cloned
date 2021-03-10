@@ -47,7 +47,7 @@ const SubchannelsWrapper = styled.div`
   flex: 1;
   overflow-y: scroll;
   position: relative;
-  margin-top: 10px;
+  margin: 10px 0;
   margin-right: 4px;
 
   padding: 0 7px;

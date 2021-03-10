@@ -38,6 +38,33 @@ export const register = createAsyncThunk(
   );
   
 
+export const updateAccount = createAsyncThunk(
+  "user/updateAccount",
+  async (values ,{ rejectWithValue }) => {
+    try {
+      await agent.User.updateAccount(values);
+      return values;
+    } catch (e) {
+      console.log(e);
+      return rejectWithValue(e?.data?.errors?.details);
+    }
+  }
+);
+
+export const updatePassword = createAsyncThunk(
+  "user/updatePassword",
+  async (values ,{ rejectWithValue }) => {
+    try {
+      await agent.User.updatePassword(values);
+    } catch (e) {
+      console.log(e);
+      return rejectWithValue(e?.data?.errors?.details);
+    }
+  }
+);
+
+
+
 export const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -89,6 +116,29 @@ export const userSlice = createSlice({
         state.loading = false;
       })
       .addCase(register.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(updateAccount.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateAccount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = {...state.user, ...action.payload};
+      })
+      .addCase(updateAccount.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(updatePassword.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

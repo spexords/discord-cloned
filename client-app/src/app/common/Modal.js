@@ -11,7 +11,7 @@ const Conatiner = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: black;
-  z-index: 10;
+  z-index: 15;
   background-color: rgba(0, 0, 0, 0.9);
   visibility: ${(props) => (props.opened ? "visible" : "hidden")};
 `;

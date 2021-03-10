@@ -4,7 +4,10 @@ import styled from "styled-components";
 import { logout, selectUserState } from "../stores/userSlice";
 import Button from "../common/Button";
 import Separator from "../common/Separator";
-import DefaultAvatar from "../components/DefaultAvatar";
+import EditAvatar from "../components/EditAvatar";
+import ChangeEmailForm from "../components/ChangeEmailForm";
+import { openModal } from "../stores/modalSlice";
+import ChangePasswordForm from "../components/ChangePasswordForm";
 
 const Container = styled.div`
   top: 0;
@@ -38,7 +41,7 @@ const EditFieldWrapper = styled.div`
   margin-bottom: 5px;
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
 `;
 
@@ -76,19 +79,37 @@ const CloseButton = styled.img`
   border: 1px solid white;
 `;
 
+const AvatarNameWrapper = styled.div`
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  align-items: center;
+  flex-direction: row;
+  h2 {
+    font-size: 1.4rem;
+  }
+  small {
+    font-size: 1.2rem;
+    color: #878b90;
+  }
+`;
+
 const Settings = ({ closeCallback }) => {
   const dispatch = useDispatch();
   const { user } = useSelector(selectUserState);
   return (
     <Container>
       <Wrapper>
-        <CloseButton src="./assets/icons/close.svg"  onClick={closeCallback}/>
+        <CloseButton src="./assets/icons/close.svg" onClick={closeCallback} />
         <SectionHeader>My account</SectionHeader>
         <EditFieldWrapper>
-          <OptionWrapper>
-            <h3>Avatar</h3>
-            <DefaultAvatar big/>
-          </OptionWrapper>
+          <AvatarNameWrapper>
+            <EditAvatar />
+            <h2>
+              {user?.username}
+              <small>#{user?.id.slice(-4)}</small>
+            </h2>
+          </AvatarNameWrapper>
           <EditButton>Edit</EditButton>
         </EditFieldWrapper>
         <Separator color="#42454a" />
@@ -97,7 +118,9 @@ const Settings = ({ closeCallback }) => {
             <h3>Email</h3>
             <p>{user?.email}</p>
           </OptionWrapper>
-          <EditButton>Edit</EditButton>
+          <EditButton onClick={() => dispatch(openModal(<ChangeEmailForm />))}>
+            Edit
+          </EditButton>
         </EditFieldWrapper>
         <Separator color="#42454a" />
         <EditFieldWrapper>
@@ -105,7 +128,9 @@ const Settings = ({ closeCallback }) => {
             <h3>Password</h3>
             <p>*****</p>
           </OptionWrapper>
-          <EditButton>Edit</EditButton>
+          <EditButton onClick={() => dispatch(openModal(<ChangePasswordForm />))}>
+            Edit
+          </EditButton>
         </EditFieldWrapper>
         <Separator color="#42454a" />
         <Button danger onClick={() => dispatch(logout())}>

@@ -35,6 +35,8 @@ const User = {
   login: (values) => requests.post("/user/login", values),
   current: () => requests.get("/user"),
   register: (values) => requests.post("/user/register", values),
+  updateAccount: (values) => requests.put("/user", values),
+  updatePassword: (values) => requests.put("/user/password", values)
 };
 
 const Channels = {
