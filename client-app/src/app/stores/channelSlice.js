@@ -1,6 +1,4 @@
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 import agent from "../api/agent";
 
 export const fetchChannels = createAsyncThunk(
@@ -47,68 +45,40 @@ export const fetchSubchannelDetails = (id) => async (
   invoke
 ) => {
   try {
-    const selectedSubchannel = await agent.Subchannels.fetchDetails(id);
-    invoke("AddToGroup", id);
-    dispatch(subchannelDetails(selectedSubchannel));
+    const newSubchannel = await agent.Subchannels.fetchDetails(id);
+    dispatch(subchannelDetails(newSubchannel));
   } catch (e) {
     console.log(e);
   }
 };
 
-// export const fetchSubchannelDetails = createAsyncThunk(
-//   "channel/fetchSubchannelDetails",
-//   async (id, middle) => {
-//     try {
-//       const selectedSubchannel = await agent.Subchannels.fetchDetails(id);
-//       // console.log(rejectWithValue)
-//        console.log(middle);
-//       // console.log(invoke);
+export const joinSubchannelGroup = () => async (dispatch, getState, invoke) => {
+  try {
+    const state = getState();
+    const { selectedSubchannel } = state.channel;
+    if (selectedSubchannel?.id) {
+      invoke("AddToGroup", selectedSubchannel?.id);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
 
-//       middle.extra.invoke("AddToGroup", selectedSubchannel?.id)
-//       return selectedSubchannel;
-//     } catch (e) {
-//       console.log(e)
-//       console.log(e?.data?.errors);
-//       //rejectWithValue(e?.data?.errors);
-//     }
-//   }
-// );
-
-// export let hubConnnection
-
-// export const createHubConnection = createAsyncThunk(
-//   "channel/createHubConnection",
-//   (subchannelId) => {
-//     console.log("eeeeee")
-//     const hubConnection = new HubConnectionBuilder()
-//       .withUrl(process.env.REACT_APP_API_CHAT_URL, {
-//         accessTokenFactory: () => window.localStorage.getItem("jwt"),
-//       })
-//       .configureLogging(LogLevel.Information)
-//       .build();
-
-//     hubConnection
-//       .start()
-//       .then(() => console.log(hubConnection?.state))
-//       .then(() => {
-//         if (hubConnection?.state === "Connected") {
-//           hubConnection.invoke("AddToGroup", subchannelId);
-//         }
-//       })
-//       .catch((e) => console.error("Hub error", e));
-
-//     hubConnection.on("ReceiveMessage", (message) => {
-//       console.log(message);
-//       // dispatch()
-//     });
-
-//     hubConnection.on("Send", (info) => {
-//       toast.info(info);
-//     });
-
-//     return hubConnection;
-//   }
-// );
+export const leaveSubchannelGroup = () => async (
+  dispatch,
+  getState,
+  invoke
+) => {
+  try {
+    const state = getState();
+    const { prevSelectedSubchannel } = state.channel;
+    if (prevSelectedSubchannel?.id) {
+      invoke("RemoveFromGroup", prevSelectedSubchannel?.id);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export const sendMsgToSubchannel = ({ id, content }) => async (
   dispatch,
@@ -124,21 +94,6 @@ export const sendMsgToSubchannel = ({ id, content }) => async (
     console.log(e);
   }
 };
-
-// export const sendMsgToSubchannel = createAsyncThunk(
-//   "channel/sendMsgToSubchannel",
-//   async ({ id, content }) => {
-//     try {
-//       const message = {
-//         content,
-//       };
-//       const messageEntity = await agent.Subchannels.sendMessage(id, message);
-//       return messageEntity;
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }
-// );
 
 export const createChannel = createAsyncThunk(
   "channel/createChannel",
@@ -168,7 +123,6 @@ export const createSubchannel = createAsyncThunk(
   "channel/createSubchannel",
   async ({ id, subchannel }, { rejectWithValue }) => {
     try {
-      console.log(subchannel);
       await agent.Channels.createSubchannel(id, subchannel);
       return subchannel;
     } catch (e) {
@@ -185,19 +139,19 @@ export const createSubchannel = createAsyncThunk(
   }
 );
 
-export const deleteMessageFromSubchannel = createAsyncThunk(
-  "channel/deleteMessageFromSubchannel",
-  async (id, { rejectWithValue }) => {
-    try {
-      await agent.Messages.remove(id);
-      return id;
-    } catch (e) {
-      console.log(e);
-      const errorMsg = e?.data?.errors?.details;
-      return rejectWithValue(errorMsg);
-    }
+export const deleteMsgFromSubchannel = (id) => async (
+  dispatch,
+  getState,
+  invoke
+) => {
+  try {
+    const state = getState();
+    const { selectedSubchannel } = state.channel;
+    invoke("RemoveMessage", selectedSubchannel?.id, id);
+  } catch (e) {
+    console.log(e);
   }
-);
+};
 
 export const leaveChannel = createAsyncThunk(
   "channel/leaveChannel",
@@ -262,15 +216,25 @@ export const channelSlice = createSlice({
     selectedChannel: null,
     selectedChannelUsers: null,
     selectedSubchannel: null,
-    hub: null,
+    prevSelectedSubchannel: null,
     loading: false,
     error: null,
   },
   reducers: {
+    resetChannelSlice: (state) => {
+      state.channels = null;
+      state.selectedChannel = null;
+      state.selectedChannelUsers = null;
+      state.selectedSubchannel = null;
+      state.prevSelectedSubchannel = null;
+      state.loading = false;
+      state.error = null;
+    },
     resetChannelErrors: (state) => {
       state.error = null;
     },
     subchannelDetails: (state, action) => {
+      state.prevSelectedSubchannel = state.selectedSubchannel;
       state.selectedSubchannel = action.payload;
       state.error = null;
       state.loading = false;
@@ -283,6 +247,11 @@ export const channelSlice = createSlice({
         ];
       }
     },
+    deleteMessage: (state, action) => {
+      state.selectedSubchannel.messages = state.selectedSubchannel?.messages.filter(
+        (m) => m.id !== action.payload
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -294,8 +263,6 @@ export const channelSlice = createSlice({
       // })
       .addCase(fetchChannels.pending, (state, action) => {
         state.loading = true;
-        state.selectedChannel = null;
-        state.selectedSubchannel = null;
         state.error = null;
       })
       .addCase(fetchChannels.fulfilled, (state, action) => {
@@ -307,13 +274,14 @@ export const channelSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchChannelDetails.pending, (state, action) => {
-        state.loading = true;
         state.selectedChannel = null;
-        state.selectedSubchannel = null;
+        state.loading = true;
         state.error = null;
       })
       .addCase(fetchChannelDetails.fulfilled, (state, action) => {
         state.selectedChannel = action.payload;
+        state.prevSelectedSubchannel = state.selectedSubchannel;
+        state.selectedSubchannel = null;
         state.loading = false;
       })
       .addCase(fetchChannelDetails.rejected, (state, action) => {
@@ -333,23 +301,6 @@ export const channelSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      // .addCase(sendMsgToSubchannel.pending, (state, action) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(sendMsgToSubchannel.fulfilled, (state, action) => {
-      //   if (state.selectedSubchannel) {
-      //     state.selectedSubchannel.messages = [
-      //       ...state.selectedSubchannel.messages,
-      //       action.payload,
-      //     ];
-      //   }
-      //   state.loading = false;
-      // })
-      // .addCase(sendMsgToSubchannel.rejected, (state, action) => {
-      //   state.error = action.payload;
-      //   state.loading = false;
-      // })
       .addCase(createChannel.pending, (state, action) => {
         state.loading = true;
         state.error = null;
@@ -386,20 +337,6 @@ export const channelSlice = createSlice({
         state.loading = false;
       })
       .addCase(createSubchannel.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-      .addCase(deleteMessageFromSubchannel.pending, (state, action) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deleteMessageFromSubchannel.fulfilled, (state, action) => {
-        state.selectedSubchannel.messages = state.selectedSubchannel?.messages.filter(
-          (m) => m.id !== action.payload
-        );
-        state.loading = false;
-      })
-      .addCase(deleteMessageFromSubchannel.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })
@@ -464,7 +401,9 @@ export const channelSlice = createSlice({
 export const {
   resetChannelErrors,
   subchannelDetails,
+  resetChannelSlice,
   addMessage,
+  deleteMessage,
 } = channelSlice.actions;
 
 export const selectChannelState = (state) => state.channel;

@@ -1,12 +1,10 @@
 import {
   applyMiddleware,
   combineReducers,
-  configureStore,
   createStore,
-  getDefaultMiddleware,
 } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
-import channelReducer, { addMessage } from "./channelSlice";
+import channelReducer, { addMessage, deleteMessage } from "./channelSlice";
 import modalReducer from "./modalSlice";
 
 import {
@@ -18,7 +16,7 @@ import {
 } from "redux-signalr";
 import { toast } from "react-toastify";
 
-const connection = new HubConnectionBuilder()
+export const connection = new HubConnectionBuilder()
   .configureLogging(LogLevel.Debug)
   .withUrl(process.env.REACT_APP_API_CHAT_URL, {
     accessTokenFactory: () => window.localStorage.getItem("jwt"),
@@ -32,8 +30,10 @@ const callbacks = withCallbacks()
   .add("ReceiveMessage", (msg) => (dispatch) => {
     dispatch(addMessage(msg))
   })
+  .add("ReceiveRemoveMessage", id => dispatch => {
+    dispatch(deleteMessage(id))
+  })
   .add("Send", (info) => () => {
-    console.log("lul");
     toast.info(info);
     // dispatch(setRandomNumber(num));
     // invoke('SendMessage', txt + example.text)
@@ -42,6 +42,7 @@ const callbacks = withCallbacks()
 const signalrMiddleware = signalMiddleware({
   callbacks,
   connection,
+  shouldConnectionStartImmediately: false
 });
 
 
@@ -51,5 +52,5 @@ export default createStore(
     channel: channelReducer,
     modal: modalReducer,
   }),
-  applyMiddleware(signalrMiddleware)
+  applyMiddleware(signalrMiddleware),
 );

@@ -1,5 +1,4 @@
 import Axios from "axios";
-import { id } from "date-fns/locale";
 
 Axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 

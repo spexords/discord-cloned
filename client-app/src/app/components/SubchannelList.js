@@ -1,8 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   fetchSubchannelDetails,
+  joinSubchannelGroup,
+  leaveSubchannelGroup,
   resetChannelErrors,
   selectChannelState,
 } from "../stores/channelSlice";
@@ -10,7 +12,7 @@ import { openModal } from "../stores/modalSlice";
 import UserInfo from "./UserInfo";
 import NewSubchannelForm from "./NewSubchannelForm";
 import ChannelMenu from "./ChannelMenu";
-import { useOnClickOutside } from "../hooks/useOnClickOutside";
+import { selectUserState } from "../stores/userSlice";
 
 const Containter = styled.div`
   display: flex;
@@ -22,6 +24,7 @@ const Containter = styled.div`
 const ChannelNameWrapper = styled.div`
   display: flex;
   height: 50px;
+  position: relative;
   flex-direction: row;
   cursor: pointer;
   padding: 0px 15px;
@@ -104,15 +107,27 @@ const SubchannelList = () => {
   const { selectedChannel, selectedSubchannel } = useSelector(
     selectChannelState
   );
+  const { user } = useSelector(selectUserState);
   const [menuOpened, setMenuOpened] = useState(false);
   const ref = useRef();
   const dispatch = useDispatch();
 
-
-  const handleNewChannel = () => {
-    dispatch(resetChannelErrors());
-    dispatch(openModal(<NewSubchannelForm />));
+  const handleNewSubchannel = () => {
+    if (user?.id === selectedChannel?.creatorId) {
+      dispatch(resetChannelErrors());
+      dispatch(openModal(<NewSubchannelForm />));
+    }
   };
+
+  const handleSubchannelClick = (id) => {
+    dispatch(fetchSubchannelDetails(id));
+  };
+
+  useEffect(() => {
+    dispatch(joinSubchannelGroup());
+    return () => dispatch(leaveSubchannelGroup());
+  }, [selectedSubchannel?.id]);
+
   return (
     <Containter>
       {selectedChannel && (
@@ -125,15 +140,16 @@ const SubchannelList = () => {
             src={`./assets/icons/${menuOpened ? "close" : "down-arrow"}.svg`}
             alt="menu"
           />
+          {menuOpened && (
+            <ChannelMenu
+              closeCallback={() => setMenuOpened(false)}
+              trigger={ref}
+            />
+          )}
         </ChannelNameWrapper>
       )}
+
       <SubchannelsWrapper>
-        {menuOpened && (
-          <ChannelMenu
-            closeCallback={() => setMenuOpened(false)}
-            trigger={ref}
-          />
-        )}
         {selectedChannel && (
           <SubheaderWrapper>
             <ArrowButton alt="arrow" src="./assets/icons/down-arrow-gray.svg" />
@@ -141,7 +157,7 @@ const SubchannelList = () => {
             <NewSubchannelButton
               alt="subchannelButton"
               src="./assets/icons/gray-plus.svg"
-              onClick={handleNewChannel}
+              onClick={handleNewSubchannel}
             />
           </SubheaderWrapper>
         )}
@@ -149,7 +165,7 @@ const SubchannelList = () => {
           <SubchannelWrapper
             key={sc.id}
             selected={selectedSubchannel?.id === sc.id}
-            onClick={() => dispatch(fetchSubchannelDetails(sc.id))}
+            onClick={() => handleSubchannelClick(sc.id)}
           >
             <img alt="hash" src="./assets/icons/hash-tag.svg" />
             <h1>{sc.name}</h1>

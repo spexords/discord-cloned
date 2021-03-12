@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../common/Button";
 import { FormWrapper } from "../common/FormWrapper";

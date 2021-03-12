@@ -133,7 +133,9 @@ const Settings = ({ closeCallback }) => {
           </EditButton>
         </EditFieldWrapper>
         <Separator color="#42454a" />
-        <Button danger onClick={() => dispatch(logout())}>
+        <Button danger onClick={() => {
+          dispatch(logout())
+          }}>
           Logout
         </Button>
       </Wrapper>

@@ -23,9 +23,10 @@ const App = () => {
   useEffect(() => {
     const token = window.localStorage.getItem("jwt");
     if (token) {
-      dispatch(fetchCurrentUser());
+      dispatch(fetchCurrentUser()).then();
     }
   }, []);
+
   return (
     <>
       <ToastContainer position="bottom-right"/>

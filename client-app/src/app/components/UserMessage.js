@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { deleteMessageFromSubchannel, selectChannelState } from "../stores/channelSlice";
+import { deleteMsgFromSubchannel, selectChannelState } from "../stores/channelSlice";
 import { selectUserState } from "../stores/userSlice";
 import DefaultAvatar from "./DefaultAvatar";
 
@@ -59,7 +59,7 @@ const UserMessage = ({ id, image, sender, date, content }) => {
 
   const handleBinClick = () => {
     if (binClickedOnce) {
-      dispatch(deleteMessageFromSubchannel(id))
+      dispatch(deleteMsgFromSubchannel(id))
     }
     setBinClickedOnce(true);
   };

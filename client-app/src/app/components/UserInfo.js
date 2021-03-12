@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Settings from "../layouts/Settings";
-import { logout, selectUserState } from "../stores/userSlice";
+import { selectUserState } from "../stores/userSlice";
 import DefaultAvatar from "./DefaultAvatar";
 
 const Container = styled.div`
@@ -40,7 +40,6 @@ const MenuIcon = styled.img`
 `;
 
 const UserInfo = () => {
-  const dispatch = useDispatch();
   const { user } = useSelector(selectUserState);
   const [settingsOpened, setSettingsOpened] = useState(false);
   if (settingsOpened) {

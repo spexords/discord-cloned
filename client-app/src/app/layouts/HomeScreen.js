@@ -1,9 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import styled from "styled-components";
-import { history } from "../..";
-import Button from "../common/Button";
-import { FormWrapper } from "../common/FormWrapper";
 import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
 

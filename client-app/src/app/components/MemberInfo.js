@@ -38,7 +38,7 @@ const MemberInfo = ({ id, image, name, isHost }) => {
     <Wrapper ref={ref} onClick={onUserClick}>
       <DefaultAvatar image={image} />
       <p>{name}</p>
-      {isHost && <img src="./assets/icons/crown.svg" />}
+      {isHost && <img alt="host" src="./assets/icons/crown.svg" />}
       {menuOpened && (
         <MemberMenu
           id={id}

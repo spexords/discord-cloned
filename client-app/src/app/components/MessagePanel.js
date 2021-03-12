@@ -40,7 +40,9 @@ const MainContainer = styled.div`
 `;
 
 const MessagePanel = () => {
+
   const { selectedSubchannel } = useSelector(selectChannelState);
+
   return (
     <Container>
       <HeaderContainer>

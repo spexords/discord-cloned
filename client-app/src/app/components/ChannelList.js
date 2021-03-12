@@ -62,30 +62,23 @@ const ChannelCircledButton = styled.div`
 
 const ChannelList = () => {
   const dispatch = useDispatch();
-  const { channels, selectedChannel, selectedSubchannel } = useSelector(selectChannelState);
+  const { channels, selectedChannel } = useSelector(selectChannelState);
   useEffect(() => {
     dispatch(fetchChannels())
     .then((r) => dispatch(fetchChannelDetails(r.payload[0]?.id))
-    // .then((e) =>
-    //     (createHubConnection(e.payload?.id))
-    // )
-    );
-  }, []);
+    )
+  }
+ , []);
 
   useEffect(() => {
-    if (selectedChannel !== null) {
-      if (selectedChannel?.subchannels?.length > 0) {
+    if (selectedChannel) {
+      if (selectedChannel.subchannels?.length > 0) {
         dispatch(fetchSubchannelDetails(selectedChannel?.subchannels[0]?.id));
       }
       dispatch(fetchChannelUsers(selectedChannel?.id));
     }
   }, [selectedChannel]);
 
-  // // useEffect(() => {
-  // //   if(selectedSubchannel !== null) {
-  // //     dispatch(createHubConnection(selectedSubchannel?.id))
-  // //   }
-  // // }, [selectedSubchannel])
 
   const handleNewChannel = () => {
     dispatch(resetChannelErrors());

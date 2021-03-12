@@ -1,7 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { selectUserState } from "../stores/userSlice";
 import DefaultAvatar from "./DefaultAvatar";
 
 const Wrapper = styled.div`
@@ -37,7 +35,6 @@ const EditWrapper = styled.div`
 `
 
 const EditAvatar = () => {
-  const { user } = useSelector(selectUserState);
   return (
     <Wrapper>
         <DefaultAvatar big/>

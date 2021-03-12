@@ -7,8 +7,8 @@ import { useOnClickOutside } from "../hooks/useOnClickOutside";
 import {
   leaveChannel,
   selectChannelState,
-  changePasswordChannel,
   resetChannelErrors,
+  deleteChannel,
 } from "../stores/channelSlice";
 import { closeModal, openModal } from "../stores/modalSlice";
 import { selectUserState } from "../stores/userSlice";
@@ -17,10 +17,11 @@ import ChangeChannelPasswordForm from "./ChangeChannelPasswordForm";
 const Wrapper = styled.div`
   position: absolute;
   cursor: pointer;
+  top: 65px;
   background-color: #18191c;
   z-index: 5;
   padding: 10px;
-  width: calc(100% - 14px);
+  width: calc(100% - 30px);
   display: flex;
   border-radius: 5px;
   flex-direction: column;
@@ -73,7 +74,7 @@ const ChannelMenu = ({ closeCallback, trigger }) => {
           header={`Deleting "${selectedChannel?.name}"`}
           content="Do you really want to delete this channel?"
           confirmCallback={() =>
-            dispatch(changePasswordChannel(selectedChannel?.id)).then((r) => {
+            dispatch(deleteChannel(selectedChannel?.id)).then((r) => {
               if (!r.error) {
                 dispatch(closeModal());
                 toast.dark("You deleted the channel");

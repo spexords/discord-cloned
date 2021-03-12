@@ -45,6 +45,9 @@ const Chat = () => {
   const { selectedSubchannel } = useSelector(selectChannelState);
   const [content, setContent] = useState("");
   const dispatch = useDispatch();
+
+
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       dispatch(
