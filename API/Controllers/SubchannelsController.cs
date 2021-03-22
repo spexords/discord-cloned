@@ -1,4 +1,5 @@
-﻿using Application.Forms;
+﻿using Application.DTO;
+using Application.Forms;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +31,9 @@ namespace API.Controllers
 
         ///api/subchannels/1/messages
         [HttpPost("{id}/messages")]
-        public async Task<ActionResult> CreateMessage(Guid id, MessageCreateRequest values)
+        public async Task<ActionResult<MessageDto>> CreateMessage(Guid id, MessageCreateRequest values)
         {
-            await subchannelService.CreateMessage(id, values);
-            return Ok();
+            return Ok(await subchannelService.CreateMessage(id, values));
         }
 
         ///api/subchannels/1

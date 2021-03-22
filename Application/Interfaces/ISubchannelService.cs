@@ -9,7 +9,7 @@ namespace Application.Interfaces
     {
         Task<SubchannelDetailedDto> Details(Guid id);
         Task Delete(Guid id);
-        Task CreateMessage(Guid id, MessageCreateRequest values);
+        Task<MessageDto> CreateMessage(Guid id, MessageCreateRequest values);
 
     }
 }

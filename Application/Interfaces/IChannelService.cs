@@ -10,7 +10,8 @@ namespace Application.Interfaces
     {
         Task Create(ChannelCreateRequest values);
         Task CreateSubchannel(Guid channelId, SubchannelCreateRequest values);
-        Task Join(ChannelJoinRequest values);
+        Task<ChannelDto> Join(ChannelJoinRequest values);
+        Task Leave(Guid id);
         Task KickUser(Guid channelId, Guid userId);
         Task UpdateChannelPassword(Guid id, ChangePasswordRequest values);
         Task<ChannelDetailedDto> Details(Guid id);

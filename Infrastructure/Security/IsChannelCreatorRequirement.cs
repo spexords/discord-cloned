@@ -31,6 +31,7 @@ namespace Infrastructure.Security
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsChannelCreatorRequirement requirement)
         {
             var currentUsername = httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var routes = httpContextAccessor.HttpContext.GetRouteData();
             var channelId = Guid.Parse(httpContextAccessor.HttpContext.GetRouteData().Values["id"].ToString());
             var channel = dataContext.Channels.Find(channelId);
             var creator = channel?.UserChannels.FirstOrDefault(uc => uc.IsCreator);

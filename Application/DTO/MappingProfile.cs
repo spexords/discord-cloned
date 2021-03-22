@@ -2,6 +2,7 @@
 using Domain;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Application.DTO
@@ -14,7 +15,8 @@ namespace Application.DTO
                 .ForMember(u => u.Token, opt => opt.MapFrom<TokenResolver>());
             CreateMap<User, UserGeneralDto>();
             CreateMap<Channel, ChannelDto>();
-            CreateMap<Channel, ChannelDetailedDto>();
+            CreateMap<Channel, ChannelDetailedDto>()
+                .ForMember(c => c.CreatorId, opt => opt.MapFrom(src => src.UserChannels.First(uc => uc.IsCreator).UserId));
             CreateMap<Subchannel, SubchannelDto>();
             CreateMap<Subchannel, SubchannelDetailedDto>();
             CreateMap<Message, MessageDto>()

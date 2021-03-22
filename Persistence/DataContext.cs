@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Persistence
 {
@@ -61,5 +62,6 @@ namespace Persistence
         public DbSet<Subchannel> Subchannels { get; set; }
         public DbSet<UserChannel> UserChannels { get; set; }
         public DbSet<Message> Messages { get; set; }
+ 
     }
 }

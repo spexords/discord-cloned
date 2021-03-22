@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +23,7 @@ namespace API
                 try
                 {
                     var context = services.GetRequiredService<DataContext>();
+                //    context.Database.Migrate();
                     Seed.SeedData(context).Wait();
                 }
                 catch(Exception ex)

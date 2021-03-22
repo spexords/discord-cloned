@@ -1,9 +1,6 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
 using Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.DTO
 {
@@ -20,4 +17,5 @@ namespace Application.DTO
             return jwtGenerator.CreateToken(source);
         }
     }
+
 }

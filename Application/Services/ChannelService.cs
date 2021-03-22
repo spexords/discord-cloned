@@ -136,7 +136,7 @@ namespace Application.Services
             return mapper.Map<List<ChannelDto>>(channels);
         }
 
-        public async Task Join(ChannelJoinRequest values)
+        public async Task<ChannelDto> Join(ChannelJoinRequest values)
         {
             var channel = await dataContext.Channels.FirstOrDefaultAsync(c => c.Name == values.Name && c.HashedPassword == values.Password.ToSHA256());
             if (channel == null)
@@ -156,6 +156,7 @@ namespace Application.Services
             {
                 throw new Exception("Problem occured during saving changes.");
             }
+            return mapper.Map<ChannelDto>(channel);
         }
 
         public async Task KickUser(Guid channelId, Guid userId)
@@ -186,7 +187,7 @@ namespace Application.Services
 
             if (channel.HashedPassword != values.CurrentPassword.ToSHA256())
             {
-                throw new RestException(HttpStatusCode.BadRequest, new { details = "Invalid password" });
+                throw new RestException(HttpStatusCode.BadRequest, new { details = "Invalid channel password" });
             }
             channel.HashedPassword = values.NewPassword.ToSHA256();
             var success = await dataContext.SaveChangesAsync() > 0;
@@ -207,6 +208,38 @@ namespace Application.Services
             return mapper.Map<List<UserGeneralDto>>(users);
         }
 
+        public async Task Leave(Guid id)
+        {
+            var userChannel = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.ChannelId == id && uc.User.Username == userAccessor.GetCurrentUsername());
+            if(userChannel == null)
+            {
+                throw new RestException(HttpStatusCode.BadRequest, new { details = "Could not leave channel" });
+            }
 
+            UserChannel newCreator = null;
+            if(userChannel.IsCreator)
+            {
+                newCreator = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.ChannelId == id && !uc.IsCreator);
+                if(newCreator != null)
+                {
+                    newCreator.IsCreator = true;
+                }
+                else
+                {
+                    dataContext.Remove(userChannel.Channel);
+                }
+            }
+
+            if(newCreator != null)
+            {
+                dataContext.UserChannels.Remove(userChannel);
+            }
+
+            var success = await dataContext.SaveChangesAsync() > 0;
+            if (!success)
+            {
+                throw new Exception("Problem occured during saving changes.");
+            }
+        }
     }
 }

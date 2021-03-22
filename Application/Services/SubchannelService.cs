@@ -28,7 +28,7 @@ namespace Application.Services
             this.mapper = mapper;
         }
 
-        public async Task CreateMessage(Guid id, MessageCreateRequest values)
+        public async Task<MessageDto> CreateMessage(Guid id, MessageCreateRequest values)
         {
             var subchannel = await dataContext.Subchannels.FirstOrDefaultAsync(sc => sc.Id == id);
             if (subchannel == null)
@@ -42,21 +42,24 @@ namespace Application.Services
             {
                 throw new RestException(HttpStatusCode.Forbidden, new { details = "User does not belong to the channel" });
             }
-    
-            dataContext.Messages.Add(new Message
+
+            var msg = new Message
             {
                 Id = values.Id,
                 Subchannel = subchannel,
                 User = user,
                 Date = DateTime.Now,
                 Content = values.Content
-            });
+            };
+            
+            await dataContext.Messages.AddAsync(msg);
 
             var success = await dataContext.SaveChangesAsync() > 0;
             if (!success)
             {
                 throw new Exception("Problem occured during saving changes.");
             }
+            return mapper.Map<MessageDto>(msg);
         }
 
         public async Task Delete(Guid id)

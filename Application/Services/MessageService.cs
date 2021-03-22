@@ -33,7 +33,7 @@ namespace Application.Services
             if(message.User.Id != user.Id)
             {
                 var userChannel = await dataContext.UserChannels.FirstOrDefaultAsync(uc => uc.ChannelId == message.Subchannel.Channel.Id && uc.IsCreator);
-                if (userChannel.User.Id != id)
+                if (userChannel.User.Id != user.Id)
                 {
                     throw new RestException(HttpStatusCode.Unauthorized, new { details = "Could not delete message" });
                 }

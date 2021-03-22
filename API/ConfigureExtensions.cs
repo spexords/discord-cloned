@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace API
 {
@@ -24,7 +25,16 @@ namespace API
             });
         }
 
-        public static void ConfigureServices(this IServiceCollection services)
+        public static void ConfigureSqlLite(this IServiceCollection services, string connectionString)
+        {
+            services.AddDbContext<DataContext>(opt =>
+            {
+                opt.UseLazyLoadingProxies();
+                opt.UseSqlite(connectionString);
+            });
+        }
+
+        public static void ConfigureBusinessServices(this IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IChannelService, ChannelService>();
@@ -77,6 +87,19 @@ namespace API
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
+                };
+                opt.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }

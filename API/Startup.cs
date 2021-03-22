@@ -1,4 +1,5 @@
 using API.Middlewares;
+using API.SignalR;
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.Security;
@@ -35,16 +36,27 @@ namespace API
         {
             services.ConfigureEfSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 
-            services.ConfigureCors();
+
+            ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.ConfigureSqlLite(Configuration.GetConnectionString("DefaultConnection"));
+
 
             ConfigureServices(services);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureServices();
+            services.ConfigureCors();
+
+            services.ConfigureBusinessServices();
 
             services.AddAutoMapper(typeof(UserService).Assembly);
+
+            services.AddSignalR();
 
             services.ConfigureControllers();
 
@@ -68,6 +80,9 @@ namespace API
         {
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
@@ -79,6 +94,8 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

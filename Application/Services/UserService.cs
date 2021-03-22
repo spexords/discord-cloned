@@ -43,21 +43,19 @@ namespace Application.Services
 
         public async Task Register(RegisterRequest values)
         {
-            var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Username == values.Username && u.HashedPassword == values.Password.ToSHA256());
-
-            if (user != null)
+            if (await dataContext.Users.AnyAsync(u => u.Username == values.Username || u.Email == values.Email))
             {
                 throw new RestException(HttpStatusCode.BadRequest, new { details = "Username or email is already used" });
             }
 
-            var newUser = new User
+            var user = new User
             {
                 Username = values.Username,
                 Email = values.Email,
                 HashedPassword = values.Password.ToSHA256()
             };
 
-            await dataContext.AddAsync(newUser);
+            await dataContext.AddAsync(user);
             var success = await dataContext.SaveChangesAsync() > 0;
             if(!success)
             {

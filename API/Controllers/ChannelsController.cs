@@ -48,9 +48,16 @@ namespace API.Controllers
 
         ///api/channels/join
         [HttpPost("join")]
-        public async Task<ActionResult> Join(ChannelJoinRequest values)
+        public async Task<ActionResult<ChannelDto>> Join(ChannelJoinRequest values)
         {
-            await channelService.Join(values);
+            return Ok(await channelService.Join(values));
+        }
+
+        /// api/channels/1/leave
+        [HttpPost("{id}/leave")]
+        public async Task<ActionResult> Leave(Guid id)
+        {
+            await channelService.Leave(id);
             return Ok();
         }
 
@@ -63,6 +70,7 @@ namespace API.Controllers
             await channelService.KickUser(id, uid);
             return Ok();
         }
+
 
         ///api/channels/id
         [HttpGet("{id}")]
