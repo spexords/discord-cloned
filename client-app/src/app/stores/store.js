@@ -12,18 +12,15 @@ import {
   signalMiddleware,
   HttpTransportType,
   HubConnectionBuilder,
-  LogLevel,
 } from "redux-signalr";
 import { toast } from "react-toastify";
 
 export const connection = new HubConnectionBuilder()
-  .configureLogging(LogLevel.Debug)
   .withUrl(process.env.REACT_APP_API_CHAT_URL, {
     accessTokenFactory: () => window.localStorage.getItem("jwt"),
     skipNegotiation: true,
     transport: HttpTransportType.WebSockets,
   })
-  .configureLogging(LogLevel.Information)
   .build();
 
 const callbacks = withCallbacks()
@@ -35,8 +32,6 @@ const callbacks = withCallbacks()
   })
   .add("Send", (info) => () => {
     toast.info(info);
-    // dispatch(setRandomNumber(num));
-    // invoke('SendMessage', txt + example.text)
   });
 
 const signalrMiddleware = signalMiddleware({

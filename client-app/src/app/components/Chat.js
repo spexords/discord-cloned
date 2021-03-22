@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
@@ -45,8 +45,11 @@ const Chat = () => {
   const { selectedSubchannel } = useSelector(selectChannelState);
   const [content, setContent] = useState("");
   const dispatch = useDispatch();
+  const messagesEndRef = useRef();
 
-
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [selectedSubchannel?.messages]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -69,6 +72,7 @@ const Chat = () => {
             content={msg.content}
           />
         ))}
+        <div ref={messagesEndRef} />
       </MessageList>
       <MessageInput
         placeholder={`Type to #${selectedSubchannel?.name || ""}`}

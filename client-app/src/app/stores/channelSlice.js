@@ -57,7 +57,7 @@ export const joinSubchannelGroup = () => async (dispatch, getState, invoke) => {
     const state = getState();
     const { selectedSubchannel } = state.channel;
     if (selectedSubchannel?.id) {
-      invoke("AddToGroup", selectedSubchannel?.id);
+      await invoke("AddToGroup", selectedSubchannel?.id);
     }
   } catch (e) {
     console.log(e);
@@ -73,7 +73,7 @@ export const leaveSubchannelGroup = () => async (
     const state = getState();
     const { prevSelectedSubchannel } = state.channel;
     if (prevSelectedSubchannel?.id) {
-      invoke("RemoveFromGroup", prevSelectedSubchannel?.id);
+      await invoke("RemoveFromGroup", prevSelectedSubchannel?.id);
     }
   } catch (e) {
     console.log(e);
@@ -89,7 +89,7 @@ export const sendMsgToSubchannel = ({ id, content }) => async (
     const message = {
       content,
     };
-    invoke("SendMessage", id, message);
+   await invoke("SendMessage", id, message);
   } catch (e) {
     console.log(e);
   }
@@ -147,7 +147,7 @@ export const deleteMsgFromSubchannel = (id) => async (
   try {
     const state = getState();
     const { selectedSubchannel } = state.channel;
-    invoke("RemoveMessage", selectedSubchannel?.id, id);
+    await invoke("RemoveMessage", selectedSubchannel?.id, id);
   } catch (e) {
     console.log(e);
   }

@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { history } from "../..";
 import Button from "../common/Button";
 import { FormWrapper } from "../common/FormWrapper";
 import Error from "../common/Error";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { register as registerUser, selectUserState } from "../stores/userSlice";
+import { register as registerUser, resetErrors, selectUserState } from "../stores/userSlice";
 import { toast } from "react-toastify";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
   const { register, handleSubmit, watch, errors } = useForm();
   const { loading, error } = useSelector(selectUserState);
+  useEffect(() => {
+    dispatch(resetErrors())
+  }, [])
+  
   const onSubmit = (values) => {
     dispatch(registerUser(values)).then((r) => {
       if (!r.error) {

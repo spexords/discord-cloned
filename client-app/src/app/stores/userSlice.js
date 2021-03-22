@@ -77,6 +77,9 @@ export const userSlice = createSlice({
       window.localStorage.removeItem("jwt");
       state.user = null;
     },
+    resetErrors: (state) => {
+      state.error = null
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -145,7 +148,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, resetErrors } = userSlice.actions;
 
 export const selectUserState = (state) => state.user;
 export const selectLoggedIn = (state) => state.user.user !== null;

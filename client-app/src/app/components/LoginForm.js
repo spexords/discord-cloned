@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { history } from "../..";
@@ -6,16 +6,22 @@ import Button from "../common/Button";
 import Error from "../common/Error";
 import { FormWrapper } from "../common/FormWrapper";
 import { resetChannelSlice } from "../stores/channelSlice";
-import { login, selectUserState } from "../stores/userSlice";
+import { login, resetErrors, selectUserState } from "../stores/userSlice";
 
 const LoginForm = () => {
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
   const { loading, error } = useSelector(selectUserState);
+
+  useEffect(() => {
+    dispatch(resetErrors())
+  }, [])
+  
   const onSubmit = (values) => {
     dispatch(resetChannelSlice())
     dispatch(login(values))
   };
+  
   return (
     <FormWrapper>
       <h1>Welcome back!</h1>
